@@ -212,7 +212,9 @@ rows={db.invoices.map(i=>{const p=db.payments.find(x=>x.invoiceId===i.id);return
 
 onRow={()=>{}}
 />      
-      
+ </Module>
+}   
+
 function Reports({db}){
   const cash=db.invoices.filter(x=>x.payment==="Gotovinski"&&x.status!=="storno").reduce((a,x)=>a+Number(x.total||0),0);
   const bank=db.invoices.filter(x=>x.payment==="Žiralno"&&x.status!=="storno").reduce((a,x)=>a+Number(x.total||0),0);
