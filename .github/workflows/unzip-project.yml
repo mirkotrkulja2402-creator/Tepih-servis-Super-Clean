@@ -1,0 +1,41 @@
+name: Raspakuj Super Clean projekat
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Preuzmi repozitorij
+        uses: actions/checkout@v4
+
+      - name: Raspakuj projekat
+        run: |
+          mkdir -p _project
+          unzip -o Tepih-servis-Super-Clean-PROJEKAT-1.zip -d _project
+
+          ROOT=$(find _project -mindepth 1 -maxdepth 1 -type d | head -n 1)
+
+          if [ -n "$ROOT" ]; then
+            cp -R "$ROOT"/. .
+          else
+            cp -R _project/. .
+          fi
+
+          rm -rf _project
+          rm -f Tepih-servis-Super-Clean-PROJEKAT-1.zip
+
+      - name: Sačuvaj raspakovane fajlove
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "Raspakovan Super Clean projekat"
+          git push
