@@ -206,8 +206,13 @@ function CashDesk({db,commit}){
   return <Module title="Blagajna" subtitle="Evidencija svih računa i naplate bez brisanja dokaza.">
     <Toolbar onAdd={()=>{}} onSearch={()=>{}} onRefresh={()=>{}}/>
     <Table columns={[["no","Račun"],["customer","Kupac"],["total","Iznos"],["payment","Način"],["paid","Plaćeno"],["audit","Evidencija"]]}
+
     
 rows={db.invoices.map(i=>{const p=db.payments.find(x=>x.invoiceId===i.id);return {...i,total:money(i.total),paid:p?.paid?"Da":"Ne",audit:p?.by?`${p.by} • ${new Date(p.at).toLocaleString("bs-BA")}`:""}})}
+
+onRow={()=>{}}
+/>      
+      
 function Reports({db}){
   const cash=db.invoices.filter(x=>x.payment==="Gotovinski"&&x.status!=="storno").reduce((a,x)=>a+Number(x.total||0),0);
   const bank=db.invoices.filter(x=>x.payment==="Žiralno"&&x.status!=="storno").reduce((a,x)=>a+Number(x.total||0),0);
