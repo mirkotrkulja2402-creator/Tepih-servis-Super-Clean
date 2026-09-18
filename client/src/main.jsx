@@ -143,7 +143,7 @@ function PriceList({db,commit}){
       <Field name="name" label="Naziv / usluga / artikal" defaultValue={edit.name}/><Field name="unit" label="Mjerna jedinica" defaultValue={edit.unit||"m²"} placeholder="m², kom, sat..."/>
       <Field name="price" label="Cijena" type="number" step="0.01" defaultValue={edit.price||0}/><Field name="category" label="Kategorija" defaultValue={edit.category||"Pranje"}/>
     </FormCard>}
-    <Table columns={[["name","Naziv / usluga / artikal"],["unit","Mjerna jedinica"],["price","Cijena"],["category","Kategorija"]]} rows={rows.map(x=>({...x,price:money(x.price))})} onRow={setEdit}/>
+    <Table columns={[["name","Naziv / usluga / artikal"],["unit","Mjerna jedinica"],["price","Cijena"],["category","Kategorija"]]} rows={rows.map(x=>({...x,price:money(x.price)})} onRow={setEdit}/>
     <div className="info-card"><b>+ Dostava</b><span>Trenutno podešeno: {money(db.settings.deliveryPrice)}. Promjena je pod Administrator → Cjenovnik.</span></div>
   </Module>
 }
