@@ -59,15 +59,17 @@ app.get("/api/config", async (_req, res) => {
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const clientDist = path.resolve(__dirname, "../../client/dist");
-const clientPublic = path.resolve(__dirname, "../../client/public");
 
-// PWA files must be served before the SPA fallback.
+// Vite copies client/public into client/dist during build.
+// Serve PWA files explicitly before the SPA fallback.
 app.get("/manifest.webmanifest", (_req, res) => {
-  res.sendFile(path.join(clientPublic, "manifest.webmanifest"));
+  res.type("application/manifest+json");
+  res.sendFile(path.join(clientDist, "manifest.webmanifest"));
 });
 
 app.get("/sw.js", (_req, res) => {
-  res.sendFile(path.join(clientPublic, "sw.js"));
+  res.type("application/javascript");
+  res.sendFile(path.join(clientDist, "sw.js"));
 });
 
 app.use(express.static(clientDist));
