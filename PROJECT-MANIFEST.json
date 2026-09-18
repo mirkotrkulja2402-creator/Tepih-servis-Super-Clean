@@ -1,0 +1,31 @@
+{
+  "project": "Tepih servis Super Clean",
+  "version": "1.0.0",
+  "source_of_truth": "fresh project; no old Super Clean repo/server files included",
+  "locked_modules": [
+    "Cjenovnik",
+    "Kupci",
+    "Narudžbe",
+    "Mjerenje",
+    "Računi",
+    "Blagajna",
+    "Izvještaji",
+    "Ruta",
+    "GARI",
+    "QR KOD",
+    "Administrator",
+    "Memorandum"
+  ],
+  "stable_toolbar": [
+    "Dodaj",
+    "Ukloni",
+    "Izmijeni",
+    "Pretraga",
+    "Osvježi",
+    "PDF",
+    "Print",
+    "Izvoz",
+    "Uvoz"
+  ],
+  "brand": "latest supplied Super Clean visual reference included as assets/logo.png and label-reference.png"
+}
