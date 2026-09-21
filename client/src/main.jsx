@@ -104,49 +104,23 @@ function Login({onLogin}){
   return (
     <div className="login">
       <div className="login-card">
-        <img src="/assets/logo.png" className="login-logo" alt="Tepih servis Super Clean"/>
+        <img
+          src="/assets/logo.png"
+          className="login-logo"
+          alt="Tepih servis Super Clean"
+        />
 
         <h1>Dobro došli!</h1>
         <p className="login-subtitle">Prijavite se u svoj nalog</p>
 
-        <input
-          placeholder="Korisničko ime"
-          defaultValue="Administrator"
-          autoComplete="username"
-        />
-
-        <div className="login-password">
+        <div className="login-field">
+          <span className="login-icon">👤</span>
           <input
-            placeholder="Lozinka"
-            type={showPassword ? "text" : "password"}
-            defaultValue="superclean"
-            autoComplete="current-password"
+            placeholder="Korisničko ime"
+            defaultValue="Administrator"
+            autoComplete="username"
           />
-          <button
-            type="button"
-            className="password-toggle"
-            onClick={() => setShowPassword(!showPassword)}
-          >
-            {showPassword ? "Sakrij" : "Prikaži"}
-          </button>
         </div>
-
-        <label className="remember-password">
-          <input
-            type="checkbox"
-            checked={remember}
-            onChange={(e) => setRemember(e.target.checked)}
-          />
-          <span>Zapamti šifru</span>
-        </label>
-
-        <button className="primary big" onClick={onLogin}>
-          Prijava
-        </button>
-      </div>
-    </div>
-  );
-}
 
 function HomePage({db,nav}){
   const stats=[
