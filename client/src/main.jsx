@@ -98,16 +98,54 @@ function App(){
 }
 
 function Login({onLogin}){
-  return <div className="login">
-    <div className="login-card">
-      <img src="/assets/logo.png" className="login-logo"/>
-      <h1>Prijava u sistem</h1>
-      <p>Super Clean • Tepih servis</p>
-      <input placeholder="Korisničko ime" defaultValue="Administrator"/>
-      <input placeholder="Lozinka" type="password" defaultValue="superclean"/>
-      <button className="primary big" onClick={onLogin}>Prijava</button>
+  const [remember, setRemember] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  return (
+    <div className="login">
+      <div className="login-card">
+        <img src="/assets/logo.png" className="login-logo" alt="Tepih servis Super Clean"/>
+
+        <h1>Dobro došli!</h1>
+        <p className="login-subtitle">Prijavite se u svoj nalog</p>
+
+        <input
+          placeholder="Korisničko ime"
+          defaultValue="Administrator"
+          autoComplete="username"
+        />
+
+        <div className="login-password">
+          <input
+            placeholder="Lozinka"
+            type={showPassword ? "text" : "password"}
+            defaultValue="superclean"
+            autoComplete="current-password"
+          />
+          <button
+            type="button"
+            className="password-toggle"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? "Sakrij" : "Prikaži"}
+          </button>
+        </div>
+
+        <label className="remember-password">
+          <input
+            type="checkbox"
+            checked={remember}
+            onChange={(e) => setRemember(e.target.checked)}
+          />
+          <span>Zapamti šifru</span>
+        </label>
+
+        <button className="primary big" onClick={onLogin}>
+          Prijava
+        </button>
+      </div>
     </div>
-  </div>
+  );
 }
 
 function HomePage({db,nav}){
