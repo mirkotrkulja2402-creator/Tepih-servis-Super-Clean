@@ -290,32 +290,57 @@ function Gari({db,commit}){
   const [rows,setRows]=useState([]),[date,setDate]=useState(today()),[price,setPrice]=useState(5),[name,setName]=useState("Gari");
   const [l,setL]=useState(""),[w,setW]=useState("");
   const add=()=>{const a=Number(l||0),b=Number(w||0);if(!a||!b)return;setRows([...rows,{id:Date.now(),l:a,w:b,m2:a*b}]);setL("");setW("")};
-  const total = rows.reduce((sum,r)=>sum+r.m2,0);
-  const value = total * Number(price || 0);
+  const total=rows.reduce((a,x)=>a+x.m2,0);
+  return <Module title="GARI" subtitle="Interna evidencija; ne ulazi automatski u Kupce/Narudžbe/Račune/Blagajnu.">
+    <Toolbar onAdd={add} onSearch={()=>{}} onRefresh={()=>setRows([])}/>
+    <div className="gari-head"><Field name="gari-name" label="Naziv" value={name} onChange={e=>setName(e.target.value)}/><Field name="gari-date" label="Datum" type="date" value={date} onChange={e=>setDate(e.target.value)}/><Field name="gari-price" label="Cijena po m²" type="number" value={price} onChange={e=>setPrice(e.target.value)}/></div>
+    <div className="inline-add"><input placeholder="Dužina" value={l} onChange={e=>setL(e.target.value)}/><input placeholder="Širina" value={w} onChange={e=>setW(e.target.value)}/><button className="primary" onClick={add}>Dodaj</button></div>
+    <Table columns={[["l","Dužina"],["w","Širina"],["m2","m²"]]} rows={rows}/>
+    <div className="total-bar"><b>Ukupno m²: {total.toFixed(2)}</b><b>Ukupno: {money(total*price)}</b><button className="primary" onClick={()=>alert("GARI evidencija spremna za print.")}>Print</button></div>
+  </Module>
+}
 
-  return <Module title="GARI" subtitle="Interna evidencija preuzetih tepiha.">
-    <div className="form-grid">
-      <Field name="gari-name" label="Naziv" value={name} onChange={e=>setName(e.target.value)}/>
-      <Field name="gari-date" label="Datum" type="date" value={date} onChange={e=>setDate(e.target.value)}/>
-      <Field name="gari-price" label="Cijena po m²" type="number" step="0.01" value={price} onChange={e=>setPrice(e.target.value)}/>
-      <Field name="gari-l" label="Dužina (m)" type="number" step="0.01" value={l} onChange={e=>setL(e.target.value)}/>
-      <Field name="gari-w" label="Širina (m)" type="number" step="0.01" value={w} onChange={e=>setW(e.target.value)}/>
-    </div>
+function QrWindow({db}){
+  const [value,setValue]=useState("");
+  return <Module title="QR KOD" subtitle="Skeniranje etikete otvara tačnu narudžbu i tepih.">
+    <div className="qr-box"><QrCode size={72}/><h2>Skeniraj QR kod</h2><p>Na telefonu kamera može otvoriti skener etikete.</p><button className="primary" onClick={()=>alert("Kamera/skener će se uključiti kada se instalira QR scanner komponenta.")}>Pokreni skener</button><input value={value} onChange={e=>setValue(e.target.value)} placeholder="Ili unesi sigurni ID QR koda"/>{value&&<div className="qr-result">Referenca: <b>{value}</b></div>}</div>
+  </Module>
+}
 
-    <button className="primary" type="button" onClick={add}>Dodaj tepih</button>
-
-    <Table
-      columns={[
-        ["l","Dužina"],
-        ["w","Širina"],
-        ["m2","m²"]
-      ]}
-      rows={rows}
-    />
-
-    <div className="info-card">
-      <b>Ukupno: {total.toFixed(2)} m²</b>
-      <span>Vrijednost: {money(value)}</span>
+function Administrator({db,commit}){
+  const [tab,setTab]=useState("korisnici");
+  const tabs=[
+    ["korisnici","Korisnici",Users],["dozvole","Dozvole",Shield],["aktivnost","Evidencija aktivnosti",ReceiptText],
+    ["tema","Teme i izgled",Palette],["logo","Logo",ImageIcon],["prozori","Prozori i moduli",SlidersHorizontal],
+    ["veze","Veze između modula",Link2],["dokumenti","Dokumenti",FileText],["izvjestaji","Izvještaji",BarChart3],
+    ["blagajna","Blagajna",Wallet],["cjenovnik","Cjenovnik",Tags],["ruta","Ruta i vozila",Car],
+    ["qr","QR i etikete",QrCode],["opste","Opšte postavke",Settings],["sigurnost","Sigurnost",Shield]
+  ];
+  return <Module title="Administrator" subtitle="Centralna kontrola: korisnici, dozvole, izgled, moduli, dokumenti i sigurnost.">
+    <div className="admin-grid">
+      <div className="admin-menu">{tabs.map(([id,l,I])=><button className={tab===id?"active":""} onClick={()=>setTab(id)} key={id}><I size={18}/>{l}</button>)}</div>
+      <div className="admin-panel">
+        {tab==="tema"&&<ThemeSettings db={db} commit={commit}/>}
+        {tab==="logo"&&<LogoSettings/>}
+        {tab==="cjenovnik"&&<PriceAdmin db={db} commit={commit}/>}
+        {tab==="dozvole"&&<Permissions/>}
+        {tab==="aktivnost"&&<div className="info-card"><b>Evidencija aktivnosti</b><span>Korisnik, radnja, dokument, stare/nove vrijednosti i datum/vrijeme predviđeni su kao centralni audit zapis.</span></div>}
+        {tab!=="tema"&&tab!=="logo"&&tab!=="cjenovnik"&&tab!=="dozvole"&&<div className="info-card"><b>{tabs.find(x=>x[0]===tab)?.[1]}</b><span>Kontrolni panel je predviđen u novoj arhitekturi i vezan za administratorske dozvole.</span></div>}
+      </div>
     </div>
   </Module>
 }
+function ThemeSettings({db,commit}){
+  const themes=["clean-blue","ocean","mint","graphite","royal","sand","forest","sky"];
+  return <div><h2>Teme i izgled</h2><p>Administrator može birati gotovu temu i kasnije proširivati biblioteku.</p><div className="theme-list">{themes.map(t=><button key={t} className={db.settings.theme===t?"chosen":""} onClick={()=>commit({...db,settings:{...db.settings,theme:t}})}>{t}</button>)}</div></div>
+}
+function LogoSettings(){return <div><h2>Logo</h2><div className="logo-setting"><img src="/assets/logo.png"/><div><p>Jedinstveni logo se koristi na početnoj, dokumentima i etiketama.</p><input type="file" accept="image/png,image/jpeg,image/webp"/><div className="seg"><button>← Lijevo</button><button>Centar</button><button>Desno →</button></div></div></div></div>}
+function PriceAdmin({db,commit}){return <div><h2>Cjenovnik — administratorske postavke</h2><Field name="delivery" label="Cijena dostave" type="number" defaultValue={db.settings.deliveryPrice} onBlur={e=>commit({...db,settings:{...db.settings,deliveryPrice:Number(e.target.value)}},"Cijena dostave sačuvana")}/><p>Administrator može uređivati polja, cijene, kategorije, ikone, fontove, boje, dugmad i dozvole modula.</p></div>}
+function Permissions(){return <div><h2>Dozvole</h2><Table columns={[["role","Uloga"],["see","Vidi"],["add","Dodaj"],["edit","Izmijeni"],["delete","Ukloni"],["print","Print"],["export","Izvoz"],["special","Posebne radnje"]]} rows={[{role:"Administrator",see:"✓",add:"✓",edit:"✓",delete:"✓",print:"✓",export:"✓",special:"Sve"},{role:"Blagajnik",see:"✓",add:"—",edit:"—",delete:"—",print:"✓",export:"—",special:"Plaćeno / neplaćeno"}]}/></div>}
+
+function Module({title,subtitle,children}){return <section className="module"><div className="module-head"><div><h1>{title}</h1><p>{subtitle}</p></div></div>{children}</section>}
+function FormCard({title,children,onCancel,onSubmit,submit="Sačuvaj"}){return <form className="form-card" onSubmit={onSubmit}><div className="form-head"><h2>{title}</h2></div><div className="form-grid">{children}</div><div className="form-actions"><button type="button" className="secondary" onClick={onCancel}><Ban size={16}/> Otkaži</button><button className="primary" type="submit"><Check size={16}/> {submit}</button></div></form>}
+function Field({label,name,type="text",...props}){return <label className="field"><span>{label}</span><input name={name} type={type} {...props}/></label>}
+function SelectField({label,name,options,defaultValue}){return <label className="field"><span>{label}</span><select name={name} defaultValue={defaultValue}>{options.map(o=><option key={o}>{o}</option>)}</select></label>}
+
+createRoot(document.getElementById("root")).render(<App/>);
