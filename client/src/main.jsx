@@ -103,60 +103,75 @@ function Login({onLogin}){
 
   const styles = {
     page: {
-      minHeight: "100vh",
+      height: "100dvh",
+      minHeight: "100dvh",
       width: "100%",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      justifyContent: "center",
-      padding: "28px 18px 34px",
+      justifyContent: "flex-start",
+      padding: "8px 12px 10px",
       boxSizing: "border-box",
       position: "relative",
       overflow: "hidden",
-      background: "linear-gradient(180deg,#eaf6ff 0%,#f8fbff 54%,#eef8ff 100%)",
+      backgroundColor: "#eef8ff",
+      backgroundImage: "linear-gradient(rgba(235,248,255,.10),rgba(235,248,255,.22)),url(\"/assets/login-bg-vacuum.jpg\")",
+      backgroundSize: "cover",
+      backgroundPosition: "center top",
+      backgroundRepeat: "no-repeat",
       fontFamily: "Inter,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif",
       color: "#15365d"
     },
-    glow1: {position:"absolute",width:300,height:300,borderRadius:"50%",background:"rgba(40,154,232,.13)",top:-120,left:-100},
-    glow2: {position:"absolute",width:260,height:260,borderRadius:"50%",background:"rgba(91,197,105,.12)",right:-100,bottom:-90},
-    topWave: {position:"absolute",top:0,left:0,right:0,height:190,background:"linear-gradient(180deg,rgba(31,143,229,.16),rgba(31,143,229,0))",clipPath:"ellipse(80% 60% at 50% 0%)"},
-    brand: {position:"relative",zIndex:2,width:"min(470px,94vw)",display:"flex",justifyContent:"center",marginBottom:16},
-    logo: {width:"min(310px,72vw)",height:"auto",objectFit:"contain",filter:"drop-shadow(0 8px 18px rgba(15,78,120,.14))"},
-    card: {position:"relative",zIndex:2,width:"min(560px,94vw)",boxSizing:"border-box",background:"rgba(255,255,255,.96)",border:"1px solid rgba(112,160,196,.25)",borderRadius:32,boxShadow:"0 22px 55px rgba(34,92,135,.18)",padding:"30px clamp(22px,6vw,48px) 38px",backdropFilter:"blur(8px)"},
-    kicker: {textAlign:"center",fontSize:14,letterSpacing:2,color:"#58728e",fontWeight:700,marginBottom:8},
-    line: {width:72,height:3,borderRadius:10,background:"linear-gradient(90deg,#168be0,#36b8a5)",margin:"0 auto 14px"},
-    title: {textAlign:"center",fontSize:"clamp(38px,8vw,58px)",lineHeight:1.05,margin:"0 0 10px",fontWeight:700,color:"#0d2f55"},
-    subtitle: {textAlign:"center",fontSize:"clamp(18px,4vw,23px)",color:"#7c8fa4",margin:"0 0 26px"},
-    field: {height:66,border:"1px solid #d7e3ed",borderRadius:17,display:"flex",alignItems:"center",padding:"0 15px",background:"#fbfdff",boxShadow:"inset 0 1px 0 rgba(255,255,255,.9)",marginBottom:16},
-    iconWrap: {width:38,height:38,borderRadius:12,display:"grid",placeItems:"center",background:"#e9f5ff",color:"#1689df",flex:"0 0 auto"},
-    input: {border:0,outline:0,background:"transparent",width:"100%",fontSize:19,color:"#304b66",padding:"0 13px"},
+    glow1: {display:"none"},
+    glow2: {display:"none"},
+    topWave: {display:"none"},
+    brand: {position:"relative",zIndex:2,width:"min(390px,92vw)",display:"flex",justifyContent:"center",marginBottom:8,flex:"0 0 auto"},
+    logo: {width:"min(285px,70vw)",height:"auto",maxHeight:"185px",objectFit:"contain",filter:"drop-shadow(0 8px 18px rgba(15,78,120,.14))"},
+    card: {position:"relative",zIndex:2,width:"min(560px,94vw)",boxSizing:"border-box",background:"rgba(255,255,255,.96)",border:"1px solid rgba(112,160,196,.25)",borderRadius:30,boxShadow:"0 22px 55px rgba(34,92,135,.18)",padding:"18px clamp(18px,5vw,42px) 22px",backdropFilter:"blur(8px)",flex:"0 0 auto"},
+    kicker: {textAlign:"center",fontSize:12,letterSpacing:2,color:"#58728e",fontWeight:700,marginBottom:5},
+    line: {width:68,height:3,borderRadius:10,background:"linear-gradient(90deg,#168be0,#36b8a5)",margin:"0 auto 9px"},
+    title: {textAlign:"center",fontSize:"clamp(34px,7vw,52px)",lineHeight:1.02,margin:"0 0 7px",fontWeight:700,color:"#0d2f55"},
+    subtitle: {textAlign:"center",fontSize:"clamp(16px,3.8vw,21px)",color:"#7c8fa4",margin:"0 0 15px"},
+    field: {height:58,border:"1px solid #d7e3ed",borderRadius:17,display:"flex",alignItems:"center",padding:"0 13px",background:"#fbfdff",boxShadow:"inset 0 1px 0 rgba(255,255,255,.9)",marginBottom:12},
+    iconWrap: {width:36,height:36,borderRadius:11,display:"grid",placeItems:"center",background:"#e9f5ff",color:"#1689df",flex:"0 0 auto"},
+    input: {border:0,outline:0,background:"transparent",width:"100%",fontSize:18,color:"#304b66",padding:"0 11px"},
     eye: {border:0,background:"transparent",color:"#8095aa",display:"grid",placeItems:"center",padding:6,cursor:"pointer"},
-    button: {width:"100%",height:66,border:0,borderRadius:17,background:"linear-gradient(135deg,#148ce4,#0876ce)",color:"white",fontSize:22,fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center",gap:12,boxShadow:"0 10px 24px rgba(20,140,228,.25)",cursor:"pointer",marginTop:6},
-    rememberRow: {display:"flex",alignItems:"center",gap:12,fontSize:18,color:"#536b83",marginTop:18,cursor:"pointer",userSelect:"none"},
+    button: {width:"100%",height:58,border:0,borderRadius:17,background:"linear-gradient(135deg,#148ce4,#0876ce)",color:"white",fontSize:21,fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center",gap:12,boxShadow:"0 10px 24px rgba(20,140,228,.25)",cursor:"pointer",marginTop:4},
+    rememberRow: {display:"flex",alignItems:"center",gap:10,fontSize:17,color:"#536b83",marginTop:12,cursor:"pointer",userSelect:"none"},
     check: {width:22,height:22,accentColor:"#168be0"},
-    wave: {height:22,margin:"26px -48px -38px",borderRadius:"0 0 32px 32px",background:"linear-gradient(170deg,transparent 20%,#55c26b 21%,#55c26b 39%,#158de0 40%,#158de0 72%,#0d79cf 73%)",opacity:.96},
-    slogan: {position:"relative",zIndex:2,marginTop:20,textAlign:"center",fontFamily:"Georgia,serif",fontStyle:"italic",fontSize:"clamp(22px,5vw,30px)",color:"#1687d7",textShadow:"0 2px 10px rgba(20,130,210,.12)"}
+    wave: {height:18,margin:"15px -42px -22px",borderRadius:"0 0 30px 30px",background:"linear-gradient(170deg,transparent 20%,#55c26b 21%,#55c26b 39%,#158de0 40%,#158de0 72%,#0d79cf 73%)",opacity:.96},
+    slogan: {position:"relative",zIndex:2,marginTop:8,textAlign:"center",fontFamily:"Georgia,serif",fontStyle:"italic",fontSize:"clamp(18px,4.6vw,28px)",color:"#1687d7",textShadow:"0 2px 10px rgba(20,130,210,.12)",flex:"0 0 auto"}
   };
 
+  const compact = `@media (max-height: 760px){
+    .superclean-login-page{padding-top:4px !important;padding-bottom:4px !important}
+    .superclean-login-page .superclean-login-logo{max-height:150px !important;width:min(250px,66vw) !important}
+    .superclean-login-page .superclean-login-card{padding-top:14px !important;padding-bottom:18px !important}
+    .superclean-login-page .superclean-login-field{height:52px !important;margin-bottom:9px !important}
+    .superclean-login-page .superclean-login-button{height:54px !important}
+    .superclean-login-page .superclean-login-slogan{margin-top:5px !important;font-size:18px !important}
+  }`;
+
   return (
-    <div style={styles.page}>
+    <style>{compact}</style>
+    <div className="superclean-login-page" style={styles.page}>
       <div style={styles.glow1}/><div style={styles.glow2}/><div style={styles.topWave}/>
       <div style={styles.brand}>
-        <img src="/assets/logo.png" style={styles.logo} alt="Tepih servis Super Clean" />
+        <img className="superclean-login-logo" src="/assets/logo.png" style={styles.logo} alt="Tepih servis Super Clean" />
       </div>
 
-      <div style={styles.card}>
+      <div className="superclean-login-card" style={styles.card}>
         <div style={styles.kicker}>TEPIH SERVIS SUPER CLEAN</div>
         <div style={styles.line}/>
         <h1 style={styles.title}>Dobro došli!</h1>
         <p style={styles.subtitle}>Prijavite se u svoj nalog</p>
 
-        <div style={styles.field}>
+        <div className="superclean-login-field" style={styles.field}>
           <span style={styles.iconWrap}><UserRound size={24}/></span>
           <input style={styles.input} placeholder="Korisničko ime" defaultValue="Administrator" autoComplete="username" />
         </div>
 
-        <div style={styles.field}>
+        <div className="superclean-login-field" style={styles.field}>
           <span style={styles.iconWrap}><LockKeyhole size={24}/></span>
           <input style={styles.input} placeholder="Šifra" type={showPassword ? "text" : "password"} defaultValue="superclean" autoComplete="current-password" />
           <button type="button" style={styles.eye} onClick={()=>setShowPassword(!showPassword)} aria-label={showPassword ? "Sakrij šifru" : "Prikaži šifru"}>
@@ -164,7 +179,7 @@ function Login({onLogin}){
           </button>
         </div>
 
-        <button style={styles.button} onClick={onLogin} type="button"><LogIn size={27}/> Prijava</button>
+        <button className="superclean-login-button" style={styles.button} onClick={onLogin} type="button"><LogIn size={27}/> Prijava</button>
 
         <label style={styles.rememberRow}>
           <input style={styles.check} type="checkbox" checked={remember} onChange={e=>setRemember(e.target.checked)} />
@@ -174,7 +189,7 @@ function Login({onLogin}){
         <div style={styles.wave}/>
       </div>
 
-      <div style={styles.slogan}>Čist prostor, zdraviji dom!</div>
+      <div className="superclean-login-slogan" style={styles.slogan}>Čist prostor, zdraviji dom!</div>
     </div>
   );
 }
