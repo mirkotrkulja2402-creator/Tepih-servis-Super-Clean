@@ -103,141 +103,76 @@ function Login({onLogin}){
 
   const css=`
     .superclean-login-page{
-      width:100%;height:100dvh;min-height:100dvh;max-height:100dvh;
-      box-sizing:border-box;overflow:hidden;position:relative;
+      min-height:100dvh;width:100%;box-sizing:border-box;overflow:hidden;
       display:flex;flex-direction:column;align-items:center;
-      padding:0;background:#eef8ff;
-      background-image:url("/assets/login-bg-vacuum.jpg");
-      background-repeat:no-repeat;background-position:center top;
-      background-size:100% auto;
+      padding:0;background:#eef8ff url("/assets/login-bg-vacuum.jpg") center top / 100% auto no-repeat;
       color:#17375d;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
     }
-    .superclean-login-page:before{
-      content:"";position:absolute;left:-8%;right:-8%;bottom:-5%;height:20%;
-      background:#158de0;border-radius:50% 50% 0 0/28% 28% 0 0;
-      transform:rotate(-1deg);z-index:0;
-    }
-    .superclean-login-page:after{
-      content:"";position:absolute;left:-8%;right:-8%;bottom:3%;height:9%;
-      background:#55c66b;border-radius:50% 50% 0 0/70% 70% 0 0;
-      transform:rotate(2deg);z-index:0;
-    }
-    .superclean-login-top{
-      width:100%;height:27.2vh;min-height:360px;max-height:430px;
-      flex:0 0 auto;box-sizing:border-box;
-    }
+    .superclean-login-top{width:100%;height:clamp(360px,44.5vw,455px);flex:0 0 auto;display:flex;justify-content:center;align-items:flex-start;padding:0;box-sizing:border-box;}
+    .superclean-login-logo{display:none;}
     .superclean-login-card{
-      width:min(760px,74.5vw);box-sizing:border-box;
-      background:rgba(255,255,255,.985);
-      border:1px solid rgba(120,165,195,.22);border-radius:34px;
-      box-shadow:0 18px 45px rgba(31,96,137,.18);
-      padding:42px 50px 0;position:relative;z-index:3;
+      width:min(760px,74.5vw);box-sizing:border-box;background:rgba(255,255,255,.97);
+      border:1px solid rgba(120,165,195,.25);border-radius:34px;
+      box-shadow:0 18px 45px rgba(31,96,137,.18);padding:46px 50px 0;
+      position:relative;z-index:3;flex:0 0 auto;
     }
-    .superclean-login-kicker{
-      display:flex;align-items:center;justify-content:center;gap:26px;
-      color:#526d87;font-size:clamp(13px,1.95vw,20px);letter-spacing:2.5px;font-weight:500;
-      margin:0 0 26px;text-align:center;white-space:nowrap;
-    }
-    .superclean-login-kicker:before,.superclean-login-kicker:after{
-      content:"";display:block;width:50px;height:4px;border-radius:4px;background:#178bdc;flex:0 0 auto;
-    }
-    .superclean-login-title{
-      margin:0;text-align:center;color:#0c315a;font-weight:500;
-      font-size:clamp(40px,6.5vw,68px);line-height:1.03;
-    }
-    .superclean-login-subtitle{
-      margin:18px 0 20px;text-align:center;color:#8192a4;
-      font-size:clamp(18px,2.9vw,30px);font-weight:400;
-    }
-    .superclean-login-usericon{
-      width:clamp(46px,5.7vw,58px);height:clamp(46px,5.7vw,58px);
-      border-radius:50%;margin:0 auto 22px;
-      display:grid;place-items:center;background:#e9f6ff;color:#178bdc;
-    }
-    .superclean-login-field{
-      width:100%;height:clamp(58px,6.9vw,70px);box-sizing:border-box;margin-bottom:16px;
-      border:2px solid #d8e3eb;border-radius:20px;background:#fff;
-      display:flex;align-items:center;padding:0 16px;
-    }
-    .superclean-login-field-icon{
-      width:38px;height:38px;display:grid;place-items:center;
-      color:#148bdc;border-right:1px solid #e2e9ee;padding-right:16px;
-      box-sizing:content-box;flex:0 0 auto;
-    }
-    .superclean-login-input{
-      flex:1;min-width:0;border:0;outline:0;background:transparent;
-      color:#3b536d;font-size:clamp(18px,2.2vw,22px);padding:0 15px;
-    }
-    .superclean-login-eye{
-      border:0;background:transparent;color:#8095aa;padding:5px;cursor:pointer;display:grid;place-items:center;
-    }
-    .superclean-login-button{
-      width:100%;height:clamp(60px,7.4vw,76px);border:0;border-radius:20px;
-      background:linear-gradient(135deg,#1695e7,#0878d0);color:white;
-      display:flex;align-items:center;justify-content:center;gap:14px;
-      font-size:clamp(23px,2.8vw,29px);font-weight:600;cursor:pointer;
-      box-shadow:0 13px 28px rgba(17,139,222,.23);margin-top:2px;
-    }
-    .superclean-login-remember{
-      display:flex;align-items:center;gap:12px;margin:18px 0 28px;
-      color:#536b83;font-size:clamp(17px,2.1vw,22px);cursor:pointer;user-select:none;
-    }
-    .superclean-login-check{width:26px;height:26px;accent-color:#168fe1;flex:0 0 auto}
-    .superclean-login-footer{
-      margin:0 -50px;height:clamp(96px,12vw,122px);position:relative;overflow:hidden;
-      border-radius:0 0 34px 34px;display:flex;flex-direction:column;align-items:center;
-      justify-content:flex-start;padding-top:14px;box-sizing:border-box;color:#536b83;
-      font-size:clamp(15px,1.9vw,19px);
-    }
-    .superclean-login-footer:before{
-      content:"";position:absolute;left:-5%;right:-5%;bottom:-28px;height:78px;
-      background:#158de0;border-radius:50% 50% 0 0/35% 35% 0 0;transform:rotate(-1deg);
-    }
-    .superclean-login-footer:after{
-      content:"";position:absolute;left:-5%;right:-5%;bottom:36px;height:27px;
-      background:#55c66b;border-radius:50% 50% 0 0/70% 70% 0 0;transform:rotate(2deg);
-    }
-    .superclean-login-footer-text{position:relative;z-index:2;text-align:center}
-    .superclean-login-version{margin-top:7px}
-    .superclean-login-slogan{
-      margin-top:clamp(20px,3.5vw,44px);text-align:center;font-family:Georgia,serif;
-      font-style:italic;font-size:clamp(23px,3.7vw,38px);color:#1685d3;
-      position:relative;z-index:4;white-space:nowrap;
-    }
+    .superclean-login-kicker{display:flex;align-items:center;justify-content:center;gap:26px;color:#526d87;font-size:20px;letter-spacing:2.5px;font-weight:500;margin:0 0 28px;text-align:center;}
+    .superclean-login-kicker:before,.superclean-login-kicker:after{content:"";display:block;width:50px;height:4px;border-radius:4px;background:#178bdc;}
+    .superclean-login-title{margin:0;text-align:center;color:#0c315a;font-weight:500;font-size:clamp(48px,6vw,68px);line-height:1.05;}
+    .superclean-login-subtitle{margin:22px 0 22px;text-align:center;color:#8192a4;font-size:clamp(22px,3vw,30px);font-weight:400;}
+    .superclean-login-usericon{width:58px;height:58px;border-radius:50%;margin:0 auto 26px;display:grid;place-items:center;background:#e9f6ff;color:#178bdc;}
+    .superclean-login-field{width:100%;height:70px;box-sizing:border-box;margin-bottom:20px;border:2px solid #d8e3eb;border-radius:20px;background:#fff;display:flex;align-items:center;padding:0 20px;}
+    .superclean-login-field-icon{width:44px;height:44px;display:grid;place-items:center;color:#148bdc;border-right:1px solid #e2e9ee;padding-right:18px;box-sizing:content-box;flex:0 0 auto;}
+    .superclean-login-input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#3b536d;font-size:22px;padding:0 18px;}
+    .superclean-login-eye{border:0;background:transparent;color:#8095aa;padding:6px;cursor:pointer;}
+    .superclean-login-button{width:100%;height:76px;border:0;border-radius:20px;background:linear-gradient(135deg,#1695e7,#0878d0);color:white;display:flex;align-items:center;justify-content:center;gap:15px;font-size:29px;font-weight:600;cursor:pointer;box-shadow:0 13px 28px rgba(17,139,222,.23);margin-top:2px;}
+    .superclean-login-remember{display:flex;align-items:center;gap:14px;margin:22px 0 34px;color:#536b83;font-size:22px;cursor:pointer;user-select:none;}
+    .superclean-login-check{width:28px;height:28px;accent-color:#168fe1;}
+    .superclean-login-footer{margin:0 -50px;height:112px;position:relative;overflow:hidden;border-radius:0 0 34px 34px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:0;box-sizing:border-box;}
+    .superclean-login-footer:before{content:"";position:absolute;left:-5%;right:-5%;bottom:-28px;height:78px;background:#158de0;border-radius:50% 50% 0 0/35% 35% 0 0;transform:rotate(-1deg);}
+    .superclean-login-footer:after{content:"";position:absolute;left:-5%;right:-5%;bottom:36px;height:27px;background:#55c66b;border-radius:50% 50% 0 0/70% 70% 0 0;transform:rotate(2deg);}
+    .superclean-login-footer-text,.superclean-login-version{display:none;}
+    .superclean-login-slogan{margin-top:42px;text-align:center;font-family:Georgia,serif;font-style:italic;font-size:clamp(25px,4vw,38px);color:#1685d3;padding-bottom:18px;}
     @media(max-width:700px){
-      .superclean-login-top{height:27.2vh;min-height:0;max-height:none;}
-      .superclean-login-card{width:74.5vw;padding:28px 24px 0;border-radius:28px;}
-      .superclean-login-kicker{gap:12px;letter-spacing:1.7px;margin-bottom:20px;}
-      .superclean-login-kicker:before,.superclean-login-kicker:after{width:38px;height:3px;}
-      .superclean-login-title{font-size:clamp(38px,6.5vw,52px);}
-      .superclean-login-subtitle{font-size:clamp(18px,3.2vw,24px);margin:14px 0 18px;}
-      .superclean-login-usericon{margin-bottom:18px;}
-      .superclean-login-field{border-radius:18px;margin-bottom:14px;padding:0 12px;}
-      .superclean-login-field-icon{width:34px;height:34px;padding-right:12px;}
-      .superclean-login-input{font-size:clamp(17px,2.8vw,20px);padding:0 12px;}
-      .superclean-login-button{border-radius:18px;gap:10px;}
-      .superclean-login-remember{margin:16px 0 22px;font-size:clamp(16px,2.8vw,20px);}
-      .superclean-login-check{width:23px;height:23px;}
-      .superclean-login-footer{margin:0 -24px;border-radius:0 0 28px 28px;}
-      .superclean-login-slogan{font-size:clamp(21px,3.7vw,27px);margin-top:22px;}
+      .superclean-login-page{min-height:100dvh;height:100dvh;overflow:hidden;background-size:100% auto;background-position:center top;}
+      .superclean-login-top{height:29.6vh;min-height:360px;max-height:455px;}
+      .superclean-login-card{width:74.5vw;max-width:none;padding:31px 5vw 0;border-radius:30px;}
+      .superclean-login-kicker{font-size:clamp(13px,2.5vw,17px);letter-spacing:1.8px;gap:12px;margin-bottom:22px;white-space:nowrap;}
+      .superclean-login-kicker:before,.superclean-login-kicker:after{width:34px;height:4px;flex:0 0 auto;}
+      .superclean-login-title{font-size:clamp(44px,6.7vw,52px);}
+      .superclean-login-subtitle{font-size:clamp(20px,3vw,24px);margin:17px 0 20px;}
+      .superclean-login-usericon{width:54px;height:54px;margin-bottom:24px;}
+      .superclean-login-field{height:68px;margin-bottom:19px;padding:0 13px;border-radius:18px;}
+      .superclean-login-field-icon{width:38px;height:38px;padding-right:13px;}
+      .superclean-login-field-icon svg{width:28px;height:28px;}
+      .superclean-login-input{font-size:20px;padding:0 13px;}
+      .superclean-login-eye svg{width:27px;height:27px;}
+      .superclean-login-button{height:70px;border-radius:18px;font-size:27px;gap:11px;}
+      .superclean-login-button svg{width:30px;height:30px;}
+      .superclean-login-remember{font-size:20px;gap:11px;margin:20px 0 34px;}
+      .superclean-login-check{width:25px;height:25px;}
+      .superclean-login-footer{margin:0 -5vw;height:108px;border-radius:0 0 30px 30px;}
+      .superclean-login-slogan{margin-top:34px;font-size:clamp(22px,4vw,28px);padding:0 10px 14px;}
     }
-    @media(max-height:760px){
-      .superclean-login-top{height:24vh;}
-      .superclean-login-card{padding-top:20px;}
-      .superclean-login-kicker{margin-bottom:12px;}
-      .superclean-login-subtitle{margin:10px 0 12px;}
-      .superclean-login-usericon{margin-bottom:12px;}
-      .superclean-login-field{margin-bottom:10px;}
-      .superclean-login-remember{margin:10px 0 14px;}
-      .superclean-login-footer{height:78px;padding-top:8px;}
-      .superclean-login-slogan{margin-top:10px;}
+    @media(max-width:390px){
+      .superclean-login-top{height:29vh;min-height:290px;}
+      .superclean-login-card{width:78vw;padding:25px 4vw 0;}
+      .superclean-login-kicker{font-size:12px;gap:8px;letter-spacing:1.2px;}
+      .superclean-login-kicker:before,.superclean-login-kicker:after{width:28px;}
+      .superclean-login-title{font-size:37px;}
+      .superclean-login-subtitle{font-size:18px;}
+      .superclean-login-field{height:58px;}
+      .superclean-login-button{height:60px;font-size:23px;}
+      .superclean-login-footer{margin:0 -4vw;height:86px;}
     }
   `;
 
   return <>
     <style>{css}</style>
     <div className="superclean-login-page">
-      <div className="superclean-login-top" aria-hidden="true" />
+      <div className="superclean-login-top">
+        <img className="superclean-login-logo" src="/assets/logo.png" alt="Tepih servis Super Clean"/>
+      </div>
 
       <div className="superclean-login-card">
         <div className="superclean-login-kicker">TEPIH SERVIS SUPER CLEAN</div>
@@ -254,8 +189,8 @@ function Login({onLogin}){
         <div className="superclean-login-field">
           <span className="superclean-login-field-icon"><LockKeyhole size={31}/></span>
           <input className="superclean-login-input" type={showPassword?"text":"password"} defaultValue="superclean" autoComplete="current-password"/>
-          <button type="button" className="superclean-login-eye" onClick={()=>setShowPassword(!showPassword)} aria-label={showPassword?"Sakrij lozinku":"Prikaži lozinku"}>
-            {showPassword?<EyeOff size={30}/>:<Eye size={30}/>} 
+          <button type="button" className="superclean-login-eye" onClick={()=>setShowPassword(!showPassword)}>
+            {showPassword?<EyeOff size={30}/>:<Eye size={30}/>}
           </button>
         </div>
 
@@ -268,9 +203,7 @@ function Login({onLogin}){
           <span>Zapamti šifru</span>
         </label>
 
-        <div className="superclean-login-footer">
-          
-        </div>
+        <div className="superclean-login-footer" aria-hidden="true"/>
       </div>
 
       <div className="superclean-login-slogan">Čist prostor, zdraviji dom!</div>
