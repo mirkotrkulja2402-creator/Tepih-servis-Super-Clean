@@ -97,137 +97,185 @@ function App(){
   </div>
 }
 
+function Login({onLogin}){
+  const [remember,setRemember]=useState(true);
+  const [showPassword,setShowPassword]=useState(false);
+
+  const css=`
+    .superclean-login-page{
+      min-height:100dvh;width:100%;
+      box-sizing:border-box;overflow-y:auto;overflow-x:hidden;
+      display:flex;flex-direction:column;align-items:center;
+      padding:0 0 34px;
+      background:#eef8ff url("/assets/login-bg-vacuum.jpg") center top / 100% auto no-repeat;
+      color:#17375d;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+    }
+    .superclean-login-top{
+      width:100%;height:clamp(350px,40vw,430px);
+      flex:0 0 auto;display:flex;justify-content:center;align-items:flex-start;
+      padding-top:28px;box-sizing:border-box;
+    }
+    .superclean-login-logo{
+      width:min(360px,52vw);max-height:350px;height:auto;object-fit:contain;
+      filter:drop-shadow(0 8px 18px rgba(15,78,120,.12));
+    }
+    .superclean-login-card{
+      width:min(760px,86vw);box-sizing:border-box;
+      background:rgba(255,255,255,.97);
+      border:1px solid rgba(120,165,195,.25);
+      border-radius:34px;
+      box-shadow:0 18px 45px rgba(31,96,137,.18);
+      padding:50px 50px 0;
+      position:relative;z-index:3;
+    }
+    .superclean-login-kicker{
+      display:flex;align-items:center;justify-content:center;gap:26px;
+      color:#526d87;font-size:20px;letter-spacing:2.5px;font-weight:500;
+      margin:0 0 30px;text-align:center;
+    }
+    .superclean-login-kicker:before,.superclean-login-kicker:after{
+      content:"";display:block;width:50px;height:4px;border-radius:4px;background:#178bdc;
+    }
+    .superclean-login-title{
+      margin:0;text-align:center;color:#0c315a;font-weight:500;
+      font-size:clamp(48px,6vw,68px);line-height:1.05;
+    }
+    .superclean-login-subtitle{
+      margin:25px 0 24px;text-align:center;color:#8192a4;
+      font-size:clamp(22px,3vw,30px);font-weight:400;
+    }
+    .superclean-login-usericon{
+      width:58px;height:58px;border-radius:50%;margin:0 auto 28px;
+      display:grid;place-items:center;background:#e9f6ff;color:#178bdc;
+    }
+    .superclean-login-field{
+      width:100%;height:70px;box-sizing:border-box;margin-bottom:22px;
+      border:2px solid #d8e3eb;border-radius:20px;background:#fff;
+      display:flex;align-items:center;padding:0 20px;
+    }
+    .superclean-login-field-icon{
+      width:44px;height:44px;display:grid;place-items:center;
+      color:#148bdc;border-right:1px solid #e2e9ee;padding-right:18px;
+      box-sizing:content-box;flex:0 0 auto;
+    }
+    .superclean-login-input{
+      flex:1;min-width:0;border:0;outline:0;background:transparent;
+      color:#3b536d;font-size:22px;padding:0 18px;
+    }
+    .superclean-login-eye{
+      border:0;background:transparent;color:#8095aa;padding:6px;cursor:pointer;
+    }
+    .superclean-login-button{
+      width:100%;height:76px;border:0;border-radius:20px;
+      background:linear-gradient(135deg,#1695e7,#0878d0);color:white;
+      display:flex;align-items:center;justify-content:center;gap:15px;
+      font-size:29px;font-weight:600;cursor:pointer;
+      box-shadow:0 13px 28px rgba(17,139,222,.23);
+      margin-top:4px;
+    }
+    .superclean-login-remember{
+      display:flex;align-items:center;gap:14px;margin:25px 0 42px;
+      color:#536b83;font-size:22px;cursor:pointer;user-select:none;
+    }
+    .superclean-login-check{width:28px;height:28px;accent-color:#168fe1}
+    .superclean-login-footer{
+      margin:0 -50px;height:122px;position:relative;overflow:hidden;
+      border-radius:0 0 34px 34px;
+      display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+      padding-top:14px;box-sizing:border-box;color:#536b83;font-size:19px;
+    }
+    .superclean-login-footer:before{
+      content:"";position:absolute;left:-5%;right:-5%;bottom:-28px;height:78px;
+      background:#158de0;border-radius:50% 50% 0 0/35% 35% 0 0;
+      transform:rotate(-1deg);
+    }
+    .superclean-login-footer:after{
+      content:"";position:absolute;left:-5%;right:-5%;bottom:36px;height:27px;
+      background:#55c66b;border-radius:50% 50% 0 0/70% 70% 0 0;
+      transform:rotate(2deg);
+    }
+    .superclean-login-footer-text{position:relative;z-index:2;text-align:center}
+    .superclean-login-version{margin-top:8px}
+    .superclean-login-slogan{
+      margin-top:44px;text-align:center;font-family:Georgia,serif;
+      font-style:italic;font-size:clamp(25px,4vw,38px);color:#1685d3;
+    }
+    @media(max-width:700px){
+      .superclean-login-page{background-size:auto 430px;background-position:center top;}
+      .superclean-login-top{height:410px;padding-top:8px;}
+      .superclean-login-logo{width:min(330px,58vw);max-height:350px;}
+      .superclean-login-card{width:86vw;padding:38px 34px 0;border-radius:30px;}
+      .superclean-login-kicker{font-size:17px;letter-spacing:2px;gap:16px;margin-bottom:25px;}
+      .superclean-login-kicker:before,.superclean-login-kicker:after{width:45px;height:4px;}
+      .superclean-login-title{font-size:52px;}
+      .superclean-login-subtitle{font-size:24px;margin:18px 0 24px;}
+      .superclean-login-usericon{width:54px;height:54px;margin-bottom:24px;}
+      .superclean-login-field{height:70px;margin-bottom:20px;padding:0 16px;}
+      .superclean-login-input{font-size:20px;padding:0 15px;}
+      .superclean-login-button{height:72px;font-size:28px;}
+      .superclean-login-remember{font-size:20px;margin:22px 0 38px;}
+      .superclean-login-footer{margin:0 -34px;border-radius:0 0 30px 30px;}
+      .superclean-login-slogan{margin-top:32px;font-size:27px;padding:0 12px;}
+    }
+    @media(max-width:390px){
+      .superclean-login-top{height:350px;}
+      .superclean-login-page{background-size:auto 350px;}
+      .superclean-login-card{width:90vw;padding:30px 22px 0;}
+      .superclean-login-kicker{font-size:14px;gap:10px;letter-spacing:1.5px;}
+      .superclean-login-title{font-size:44px;}
+      .superclean-login-subtitle{font-size:20px;}
+      .superclean-login-field{height:62px;}
+      .superclean-login-button{height:64px;font-size:24px;}
+      .superclean-login-footer{margin:0 -22px;}
+    }
+  `;
+
   return <>
-    <style>{`@media (max-width:420px){.superclean-login-page{min-height:100dvh !important;height:100dvh !important}}`}</style>
-    <div className="superclean-login-page" style={{...page,background:"#eef8ff"}}>
-      <img src="/assets/login-target-clean.png" alt="Tepih servis Super Clean" style={{position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"fill",display:"block",userSelect:"none",pointerEvents:"none"}} draggable="false"/>
-      <input aria-label="Korisničko ime" defaultValue="Administrator" autoComplete="username" style={{position:"absolute",left:"17.5%",top:"47.6%",width:"65%",height:"6.1%",opacity:0,zIndex:4,border:0,outline:0,color:"transparent",background:"transparent"}}/>
-      <input aria-label="Šifra" type={showPassword?"text":"password"} defaultValue="superclean" autoComplete="current-password" style={{position:"absolute",left:"17.5%",top:"55.6%",width:"65%",height:"6.1%",opacity:0,zIndex:4,border:0,outline:0,color:"transparent",background:"transparent"}}/>
-      <button type="button" aria-label="Prikaži ili sakrij šifru" onClick={()=>setShowPassword(!showPassword)} style={{position:"absolute",left:"75.5%",top:"55.4%",width:"9%",height:"7%",border:0,background:"transparent",zIndex:5,cursor:"pointer"}}/>
-      <button type="button" aria-label="Prijava" onClick={onLogin} style={{position:"absolute",left:"17.5%",top:"63.6%",width:"65%",height:"5.7%",border:0,background:"transparent",zIndex:5,cursor:"pointer"}}/>
-      <input aria-label="Zapamti šifru" type="checkbox" checked={remember} onChange={e=>setRemember(e.target.checked)} style={{position:"absolute",left:"18%",top:"71%",width:"5%",height:"4%",opacity:0,zIndex:6,cursor:"pointer"}}/>
+    <style>{css}</style>
+    <div className="superclean-login-page">
+      <div className="superclean-login-top">
+        <img className="superclean-login-logo" src="/assets/logo.png" alt="Tepih servis Super Clean"/>
+      </div>
+
+      <div className="superclean-login-card">
+        <div className="superclean-login-kicker">TEPIH SERVIS SUPER CLEAN</div>
+        <h1 className="superclean-login-title">Dobro došli!</h1>
+        <p className="superclean-login-subtitle">Prijavite se u svoj nalog</p>
+
+        <div className="superclean-login-usericon"><UserRound size={30}/></div>
+
+        <div className="superclean-login-field">
+          <span className="superclean-login-field-icon"><UserRound size={31}/></span>
+          <input className="superclean-login-input" defaultValue="Administrator" autoComplete="username"/>
+        </div>
+
+        <div className="superclean-login-field">
+          <span className="superclean-login-field-icon"><LockKeyhole size={31}/></span>
+          <input className="superclean-login-input" type={showPassword?"text":"password"} defaultValue="superclean" autoComplete="current-password"/>
+          <button type="button" className="superclean-login-eye" onClick={()=>setShowPassword(!showPassword)}>
+            {showPassword?<EyeOff size={30}/>:<Eye size={30}/>}
+          </button>
+        </div>
+
+        <button className="superclean-login-button" onClick={onLogin} type="button">
+          <LogIn size={34}/> Prijava
+        </button>
+
+        <label className="superclean-login-remember">
+          <input className="superclean-login-check" type="checkbox" checked={remember} onChange={e=>setRemember(e.target.checked)}/>
+          <span>Zapamti šifru</span>
+        </label>
+
+        <div className="superclean-login-footer">
+          <div className="superclean-login-footer-text">Tepih servis Super Clean<div className="superclean-login-version">v1.0</div></div>
+        </div>
+      </div>
+
+      <div className="superclean-login-slogan">Čist prostor, zdraviji dom!</div>
     </div>
   </>;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
+
 function HomePage({db,nav}){
   const stats=[
     ["Kupci",db.customers.length,"kupci",Users],["Narudžbe",db.orders.length,"narudzbe",ClipboardList],
@@ -410,6 +458,5 @@ function Module({title,subtitle,children}){return <section className="module"><d
 function FormCard({title,children,onCancel,onSubmit,submit="Sačuvaj"}){return <form className="form-card" onSubmit={onSubmit}><div className="form-head"><h2>{title}</h2></div><div className="form-grid">{children}</div><div className="form-actions"><button type="button" className="secondary" onClick={onCancel}><Ban size={16}/> Otkaži</button><button className="primary" type="submit"><Check size={16}/> {submit}</button></div></form>}
 function Field({label,name,type="text",...props}){return <label className="field"><span>{label}</span><input name={name} type={type} {...props}/></label>}
 function SelectField({label,name,options,defaultValue}){return <label className="field"><span>{label}</span><select name={name} defaultValue={defaultValue}>{options.map(o=><option key={o}>{o}</option>)}</select></label>}
-
 
 createRoot(document.getElementById("root")).render(<App/>);
