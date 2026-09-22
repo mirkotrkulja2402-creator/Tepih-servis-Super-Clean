@@ -153,6 +153,7 @@ function Login({onLogin}){
   }`;
 
   return (
+  <>
     <style>{compact}</style>
     <div className="superclean-login-page" style={styles.page}>
       <div style={styles.glow1}/><div style={styles.glow2}/><div style={styles.topWave}/>
@@ -191,6 +192,7 @@ function Login({onLogin}){
 
       <div className="superclean-login-slogan" style={styles.slogan}>Čist prostor, zdraviji dom!</div>
     </div>
+  </>
   );
 }
 
