@@ -101,88 +101,130 @@ function Login({onLogin}){
   const [remember,setRemember]=useState(false);
   const [showPassword,setShowPassword]=useState(false);
 
-  const pageStyle={
-    height:'100dvh',minHeight:'100dvh',width:'100%',boxSizing:'border-box',
-    display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'flex-start',
-    overflow:'hidden',position:'relative',padding:'0 14px',
-    background:'#eef8ff url("/assets/login-bg-vacuum.jpg") center top / cover no-repeat',
-    fontFamily:'Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',color:'#173b63'
-  };
+  const css=`@media (max-height: 820px){
+    .superclean-login-card{margin-top:20vh !important}
+    .superclean-login-card{padding-top:18px !important;padding-bottom:18px !important}
+    .superclean-login-field{height:54px !important;margin-bottom:10px !important}
+    .superclean-login-button{height:56px !important}
+  }`;
 
-  const topLogo={
-    width:'min(330px,78vw)',maxHeight:'330px',height:'auto',objectFit:'contain',
-    marginTop:'10px',marginBottom:'6px',filter:'drop-shadow(0 8px 18px rgba(20,80,120,.15))'
+  const page={
+    minHeight:"100dvh",width:"100%",boxSizing:"border-box",position:"relative",
+    overflow:"hidden",display:"flex",flexDirection:"column",alignItems:"center",
+    background:"#eef8ff url('/assets/login-bg-vacuum.jpg') center center / 100% 100% no-repeat",
+    fontFamily:"Inter,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",
+    color:"#17395f"
   };
 
   const card={
-    width:'min(560px,92vw)',boxSizing:'border-box',position:'relative',zIndex:2,
-    background:'rgba(255,255,255,.97)',border:'1px solid rgba(100,150,190,.25)',
-    borderRadius:'32px',boxShadow:'0 20px 55px rgba(30,90,135,.20)',
-    padding:'25px clamp(18px,5vw,48px) 0',overflow:'hidden'
+    position:"relative",zIndex:3,width:"min(760px,calc(100vw - 90px))",
+    marginTop:"27.2vh",boxSizing:"border-box",background:"rgba(255,255,255,.965)",
+    border:"1px solid rgba(145,174,198,.24)",borderRadius:34,
+    boxShadow:"0 22px 55px rgba(30,93,137,.16)",padding:"28px 50px 0",
+    flex:"0 0 auto"
   };
 
-  const field={height:'66px',display:'flex',alignItems:'center',gap:'10px',padding:'0 14px',
-    border:'1px solid #d5e1ea',borderRadius:'20px',background:'#fbfdff',marginBottom:'14px',boxSizing:'border-box'};
-  const iconBox={width:'40px',height:'40px',borderRadius:'13px',display:'grid',placeItems:'center',
-    background:'#e7f5ff',color:'#1489df',flex:'0 0 auto'};
-  const input={width:'100%',border:0,outline:0,background:'transparent',fontSize:'20px',color:'#38516b',padding:'0 6px'};
-  const eye={border:0,background:'transparent',color:'#7e94aa',padding:'7px',display:'grid',placeItems:'center',cursor:'pointer'};
+  const kicker={
+    display:"flex",alignItems:"center",justifyContent:"center",gap:24,
+    color:"#526b86",fontSize:16,letterSpacing:2,fontWeight:500,
+    marginBottom:26,whiteSpace:"nowrap"
+  };
+
+  const dash={width:48,height:3,borderRadius:4,background:"#168cdb",flex:"0 0 auto"};
+
+  const title={textAlign:"center",fontSize:"clamp(43px,5.4vw,64px)",lineHeight:1,
+    margin:"0 0 20px",fontWeight:600,color:"#102f55"};
+
+  const subtitle={textAlign:"center",fontSize:"clamp(20px,2.7vw,28px)",
+    color:"#71869e",margin:"0 0 24px"};
+
+  const centerIcon={width:58,height:58,borderRadius:"50%",display:"grid",placeItems:"center",
+    margin:"0 auto 18px",background:"#e9f6ff",color:"#1689df"};
+
+  const field={height:68,border:"1.5px solid #d3e0ea",borderRadius:20,display:"flex",
+    alignItems:"center",padding:"0 20px",background:"rgba(255,255,255,.78)",
+    marginBottom:18,boxSizing:"border-box"};
+
+  const iconWrap={width:43,height:43,display:"grid",placeItems:"center",
+    color:"#1187df",flex:"0 0 auto"};
+
+  const separator={width:1,height:34,background:"#e0e8ef",margin:"0 18px 0 15px"};
+
+  const input={border:0,outline:0,background:"transparent",width:"100%",
+    fontSize:"clamp(18px,2.5vw,25px)",color:"#38536e",padding:0};
+
+  const eye={border:0,background:"transparent",color:"#7d91a5",display:"grid",
+    placeItems:"center",padding:6,cursor:"pointer"};
+
+  const button={width:"100%",height:68,border:0,borderRadius:20,
+    background:"linear-gradient(135deg,#1593e8,#0879d2)",color:"#fff",
+    fontSize:"clamp(22px,2.8vw,29px)",fontWeight:600,display:"flex",
+    alignItems:"center",justifyContent:"center",gap:15,
+    boxShadow:"0 10px 24px rgba(20,140,228,.22)",cursor:"pointer",marginTop:2};
+
+  const rememberRow={display:"flex",alignItems:"center",gap:13,fontSize:"clamp(18px,2.5vw,24px)",
+    color:"#536b83",marginTop:22,cursor:"pointer",userSelect:"none"};
+
+  const check={width:29,height:29,accentColor:"#168be0"};
+
+  const footer={
+    position:"relative",height:126,margin:"26px -50px 0",overflow:"hidden",
+    borderRadius:"0 0 34px 34px",display:"flex",flexDirection:"column",
+    alignItems:"center",justifyContent:"flex-start",paddingTop:30,
+    color:"#526b86",fontSize:18
+  };
+
+  const wave={
+    position:"absolute",left:0,right:0,bottom:0,height:62,
+    background:"linear-gradient(174deg,transparent 0 27%,#55c66b 28% 43%,#138ee1 44% 68%,#087bd2 69%)"
+  };
+
+  const slogan={position:"relative",zIndex:3,marginTop:14,marginBottom:12,
+    textAlign:"center",fontFamily:"Georgia,serif",fontStyle:"italic",
+    fontSize:"clamp(22px,3.2vw,31px)",fontWeight:600,color:"#1687d7"};
 
   return <>
-    <style>{`\n      .superclean-login-page *{box-sizing:border-box}\n      @media(max-height:760px){\n        .superclean-login-page .login-logo-final{width:min(285px,70vw);max-height:230px;margin-top:2px}\n        .superclean-login-page .login-card-final{padding-top:18px}\n        .superclean-login-page .login-card-final h1{font-size:42px;margin-bottom:6px}\n        .superclean-login-page .login-card-final .login-subtitle{margin-bottom:12px}\n        .superclean-login-page .login-field-final{height:57px;margin-bottom:10px}\n        .superclean-login-page .login-button-final{height:57px}\n        .superclean-login-page .login-slogan-final{margin-top:5px;font-size:19px}\n      }\n      @media(max-width:390px){\n        .superclean-login-page{padding:0 10px!important}\n        .superclean-login-page .login-logo-final{width:280px;max-height:210px}\n        .superclean-login-page .login-card-final{width:94vw;border-radius:28px;padding-left:18px;padding-right:18px}\n      }\n    `}</style>
-    <div className="superclean-login-page" style={pageStyle}>
-      <img className="login-logo-final" src="/assets/logo.png" style={topLogo} alt="Tepih servis Super Clean" />
+    <style>{css}</style>
+    <div className="superclean-login-page" style={page}>
+      <div className="superclean-login-card" style={card}>
+        <div style={kicker}><span style={dash}/><span>TEPIH SERVIS SUPER CLEAN</span><span style={dash}/></div>
+        <h1 style={title}>Dobro došli!</h1>
+        <p style={subtitle}>Prijavite se u svoj nalog</p>
 
-      <section className="login-card-final" style={card}>
-        <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'18px',color:'#4d6780',fontSize:'14px',letterSpacing:'2px',fontWeight:600}}>
-          <span style={{width:'48px',height:'3px',borderRadius:'3px',background:'#188ddd'}}></span>
-          <span>TEPIH SERVIS SUPER CLEAN</span>
-          <span style={{width:'48px',height:'3px',borderRadius:'3px',background:'#188ddd'}}></span>
+        <div style={centerIcon}><UserRound size={30}/></div>
+
+        <div className="superclean-login-field" style={field}>
+          <span style={iconWrap}><UserRound size={32}/></span>
+          <span style={separator}/>
+          <input style={input} defaultValue="Administrator" autoComplete="username" />
         </div>
 
-        <h1 style={{textAlign:'center',fontSize:'clamp(42px,8vw,62px)',lineHeight:1,margin:'32px 0 10px',fontWeight:700,color:'#102f54'}}>Dobro došli!</h1>
-        <p className="login-subtitle" style={{textAlign:'center',fontSize:'clamp(19px,4vw,26px)',color:'#8293a5',margin:'0 0 20px'}}>Prijavite se u svoj nalog</p>
-
-        <div style={{display:'flex',justifyContent:'center',marginBottom:'8px'}}>
-          <span style={{width:'50px',height:'50px',borderRadius:'50%',display:'grid',placeItems:'center',background:'#e9f6ff',color:'#1389df'}}><UserRound size={27}/></span>
-        </div>
-
-        <div className="login-field-final" style={field}>
-          <span style={iconBox}><UserRound size={27}/></span>
-          <span style={{width:'1px',height:'34px',background:'#e0e8ef'}}></span>
-          <input style={input} placeholder="Korisničko ime" defaultValue="Administrator" autoComplete="username" />
-        </div>
-
-        <div className="login-field-final" style={field}>
-          <span style={iconBox}><LockKeyhole size={27}/></span>
-          <span style={{width:'1px',height:'34px',background:'#e0e8ef'}}></span>
-          <input style={input} placeholder="Šifra" type={showPassword?'text':'password'} defaultValue="superclean" autoComplete="current-password" />
-          <button type="button" style={eye} onClick={()=>setShowPassword(!showPassword)} aria-label={showPassword?'Sakrij šifru':'Prikaži šifru'}>
-            {showPassword?<EyeOff size={27}/>:<Eye size={27}/>} 
+        <div className="superclean-login-field" style={field}>
+          <span style={iconWrap}><LockKeyhole size={31}/></span>
+          <span style={separator}/>
+          <input style={input} type={showPassword?"text":"password"} defaultValue="superclean" autoComplete="current-password" />
+          <button type="button" style={eye} onClick={()=>setShowPassword(!showPassword)}>
+            {showPassword?<EyeOff size={31}/>:<Eye size={31}/>}
           </button>
         </div>
 
-        <button className="login-button-final" style={{width:'100%',height:'66px',border:0,borderRadius:'20px',background:'linear-gradient(135deg,#1594e7,#0877cf)',color:'#fff',fontSize:'25px',fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',gap:'14px',boxShadow:'0 12px 28px rgba(18,139,224,.25)',cursor:'pointer',marginTop:'20px'}} onClick={onLogin} type="button">
-          <LogIn size={31}/> Prijava
+        <button className="superclean-login-button" style={button} onClick={onLogin} type="button">
+          <LogIn size={34}/> Prijava
         </button>
 
-        <label style={{display:'flex',alignItems:'center',gap:'12px',fontSize:'20px',color:'#536b83',margin:'18px 0 26px',cursor:'pointer',userSelect:'none'}}>
-          <input type="checkbox" checked={remember} onChange={e=>setRemember(e.target.checked)} style={{width:'25px',height:'25px',accentColor:'#168be0'}} />
+        <label style={rememberRow}>
+          <input style={check} type="checkbox" checked={remember} onChange={e=>setRemember(e.target.checked)} />
           <span>Zapamti šifru</span>
         </label>
 
-        <div style={{position:'relative',height:'92px',margin:'0 -48px',overflow:'hidden',background:'#148be0'}}>
-          <div style={{position:'absolute',left:'-5%',right:'-5%',top:'-32px',height:'70px',background:'#55c66b',borderRadius:'50% 55% 0 0 / 70% 70% 0 0',transform:'rotate(-2deg)'}}></div>
-          <div style={{position:'absolute',left:'-5%',right:'-5%',top:'-14px',height:'72px',background:'#148be0',borderRadius:'50% 48% 0 0 / 75% 75% 0 0',transform:'rotate(1deg)'}}></div>
-          <div style={{position:'absolute',inset:'22px 0 0',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'7px',color:'#405b75',fontSize:'17px'}}>
-            <span>Tepih servis Super Clean</span><span>v1.0</span>
-          </div>
+        <div style={footer}>
+          <div>Tepih servis Super Clean</div>
+          <div style={{marginTop:8}}>v1.0</div>
+          <div style={wave}/>
         </div>
-      </section>
-
-      <div className="login-slogan-final" style={{fontFamily:'Georgia,serif',fontStyle:'italic',fontSize:'clamp(21px,5vw,30px)',color:'#087fd1',marginTop:'18px',textAlign:'center',textShadow:'0 2px 8px rgba(20,130,210,.12)'}}>
-        Čist prostor, zdraviji dom!
       </div>
+
+      <div className="superclean-login-slogan" style={slogan}>Čist prostor, zdraviji dom!</div>
     </div>
   </>;
 }
