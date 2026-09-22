@@ -290,4 +290,32 @@ function Gari({db,commit}){
   const [rows,setRows]=useState([]),[date,setDate]=useState(today()),[price,setPrice]=useState(5),[name,setName]=useState("Gari");
   const [l,setL]=useState(""),[w,setW]=useState("");
   const add=()=>{const a=Number(l||0),b=Number(w||0);if(!a||!b)return;setRows([...rows,{id:Date.now(),l:a,w:b,m2:a*b}]);setL("");setW("")};
-  const total
+  const total = rows.reduce((sum,r)=>sum+r.m2,0);
+  const value = total * Number(price || 0);
+
+  return <Module title="GARI" subtitle="Interna evidencija preuzetih tepiha.">
+    <div className="form-grid">
+      <Field name="gari-name" label="Naziv" value={name} onChange={e=>setName(e.target.value)}/>
+      <Field name="gari-date" label="Datum" type="date" value={date} onChange={e=>setDate(e.target.value)}/>
+      <Field name="gari-price" label="Cijena po m²" type="number" step="0.01" value={price} onChange={e=>setPrice(e.target.value)}/>
+      <Field name="gari-l" label="Dužina (m)" type="number" step="0.01" value={l} onChange={e=>setL(e.target.value)}/>
+      <Field name="gari-w" label="Širina (m)" type="number" step="0.01" value={w} onChange={e=>setW(e.target.value)}/>
+    </div>
+
+    <button className="primary" type="button" onClick={add}>Dodaj tepih</button>
+
+    <Table
+      columns={[
+        ["l","Dužina"],
+        ["w","Širina"],
+        ["m2","m²"]
+      ]}
+      rows={rows}
+    />
+
+    <div className="info-card">
+      <b>Ukupno: {total.toFixed(2)} m²</b>
+      <span>Vrijednost: {money(value)}</span>
+    </div>
+  </Module>
+}
