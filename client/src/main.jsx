@@ -110,25 +110,25 @@ function Login({onLogin}){
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "flex-start",
+      padding: "8px 12px 10px",
       boxSizing: "border-box",
       position: "relative",
       overflow: "hidden",
       backgroundColor: "#eef8ff",
-      backgroundImage: "url(\"/assets/login-bg-vacuum.jpg\")",
-      backgroundSize: "100% auto",
+      backgroundImage: "linear-gradient(rgba(235,248,255,.10),rgba(235,248,255,.22)),url(\"/assets/login-bg-vacuum.jpg\")",
+      backgroundSize: "cover",
       backgroundPosition: "center top",
       backgroundRepeat: "no-repeat",
       fontFamily: "Inter,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif",
-      color: "#15365d",
-      padding: "clamp(255px,58vw,425px) 12px 8px"
+      color: "#15365d"
     },
     glow1: {display:"none"},
     glow2: {display:"none"},
     topWave: {display:"none"},
-    brand: {display:"none"},
-    logo: {display:"none"},
-    card: {position:"relative",zIndex:2,width:"min(760px,94vw)",boxSizing:"border-box",background:"rgba(255,255,255,.97)",border:"1px solid rgba(112,160,196,.25)",borderRadius:30,boxShadow:"0 18px 45px rgba(34,92,135,.18)",padding:"18px clamp(18px,5vw,42px) 22px",backdropFilter:"blur(6px)",flex:"0 0 auto"},
-    kicker: {textAlign:"center",fontSize:"clamp(11px,2.5vw,14px)",letterSpacing:2,color:"#58728e",fontWeight:700,marginBottom:5},
+    brand: {position:"relative",zIndex:2,width:"min(390px,92vw)",display:"flex",justifyContent:"center",marginBottom:8,flex:"0 0 auto"},
+    logo: {width:"min(285px,70vw)",height:"auto",maxHeight:"185px",objectFit:"contain",filter:"drop-shadow(0 8px 18px rgba(15,78,120,.14))"},
+    card: {position:"relative",zIndex:2,width:"min(560px,94vw)",boxSizing:"border-box",background:"rgba(255,255,255,.96)",border:"1px solid rgba(112,160,196,.25)",borderRadius:30,boxShadow:"0 22px 55px rgba(34,92,135,.18)",padding:"18px clamp(18px,5vw,42px) 22px",backdropFilter:"blur(8px)",flex:"0 0 auto"},
+    kicker: {textAlign:"center",fontSize:12,letterSpacing:2,color:"#58728e",fontWeight:700,marginBottom:5},
     line: {width:68,height:3,borderRadius:10,background:"linear-gradient(90deg,#168be0,#36b8a5)",margin:"0 auto 9px"},
     title: {textAlign:"center",fontSize:"clamp(34px,7vw,52px)",lineHeight:1.02,margin:"0 0 7px",fontWeight:700,color:"#0d2f55"},
     subtitle: {textAlign:"center",fontSize:"clamp(16px,3.8vw,21px)",color:"#7c8fa4",margin:"0 0 15px"},
@@ -140,53 +140,59 @@ function Login({onLogin}){
     rememberRow: {display:"flex",alignItems:"center",gap:10,fontSize:17,color:"#536b83",marginTop:12,cursor:"pointer",userSelect:"none"},
     check: {width:22,height:22,accentColor:"#168be0"},
     wave: {height:18,margin:"15px -42px -22px",borderRadius:"0 0 30px 30px",background:"linear-gradient(170deg,transparent 20%,#55c26b 21%,#55c26b 39%,#158de0 40%,#158de0 72%,#0d79cf 73%)",opacity:.96},
-    slogan: {position:"relative",zIndex:2,marginTop:18,textAlign:"center",fontFamily:"Georgia,serif",fontStyle:"italic",fontSize:"clamp(18px,4.6vw,28px)",color:"#1687d7",textShadow:"0 2px 10px rgba(20,130,210,.12)",flex:"0 0 auto"}
+    slogan: {position:"relative",zIndex:2,marginTop:8,textAlign:"center",fontFamily:"Georgia,serif",fontStyle:"italic",fontSize:"clamp(18px,4.6vw,28px)",color:"#1687d7",textShadow:"0 2px 10px rgba(20,130,210,.12)",flex:"0 0 auto"}
   };
 
   const compact = `@media (max-height: 760px){
-    .superclean-login-page{padding-top:clamp(220px,58vw,330px) !important;padding-bottom:4px !important}
+    .superclean-login-page{padding-top:4px !important;padding-bottom:4px !important}
+    .superclean-login-page .superclean-login-logo{max-height:150px !important;width:min(250px,66vw) !important}
     .superclean-login-page .superclean-login-card{padding-top:14px !important;padding-bottom:18px !important}
-    .superclean-login-page .superclean-login-field{height:50px !important;margin-bottom:8px !important}
-    .superclean-login-page .superclean-login-button{height:52px !important}
-    .superclean-login-page .superclean-login-slogan{margin-top:8px !important;font-size:18px !important}
+    .superclean-login-page .superclean-login-field{height:52px !important;margin-bottom:9px !important}
+    .superclean-login-page .superclean-login-button{height:54px !important}
+    .superclean-login-page .superclean-login-slogan{margin-top:5px !important;font-size:18px !important}
   }`;
 
   return (
-    <>
-      <style>{compact}</style>
-      <div className="superclean-login-page" style={styles.page}>
-        <div style={styles.glow1}/><div style={styles.glow2}/><div style={styles.topWave}/>
-        <div className="superclean-login-card" style={styles.card}>
-          <div style={styles.kicker}>TEPIH SERVIS SUPER CLEAN</div>
-          <div style={styles.line}/>
-          <h1 style={styles.title}>Dobro došli!</h1>
-          <p style={styles.subtitle}>Prijavite se u svoj nalog</p>
-
-          <div className="superclean-login-field" style={styles.field}>
-            <span style={styles.iconWrap}><UserRound size={24}/></span>
-            <input style={styles.input} placeholder="Korisničko ime" defaultValue="Administrator" autoComplete="username" />
-          </div>
-
-          <div className="superclean-login-field" style={styles.field}>
-            <span style={styles.iconWrap}><LockKeyhole size={24}/></span>
-            <input style={styles.input} placeholder="Šifra" type={showPassword ? "text" : "password"} defaultValue="superclean" autoComplete="current-password" />
-            <button type="button" style={styles.eye} onClick={()=>setShowPassword(!showPassword)} aria-label={showPassword ? "Sakrij šifru" : "Prikaži šifru"}>
-              {showPassword ? <EyeOff size={25}/> : <Eye size={25}/>} 
-            </button>
-          </div>
-
-          <button className="superclean-login-button" style={styles.button} onClick={onLogin} type="button"><LogIn size={27}/> Prijava</button>
-
-          <label style={styles.rememberRow}>
-            <input style={styles.check} type="checkbox" checked={remember} onChange={e=>setRemember(e.target.checked)} />
-            <span>Zapamti šifru</span>
-          </label>
-
-          <div style={styles.wave}/>
-        </div>
-        <div className="superclean-login-slogan" style={styles.slogan}>Čist prostor, zdraviji dom!</div>
+  <>
+    <style>{compact}</style>
+    <div className="superclean-login-page" style={styles.page}>
+      <div style={styles.glow1}/><div style={styles.glow2}/><div style={styles.topWave}/>
+      <div style={styles.brand}>
+        <img className="superclean-login-logo" src="/assets/logo.png" style={styles.logo} alt="Tepih servis Super Clean" />
       </div>
-    </>
+
+      <div className="superclean-login-card" style={styles.card}>
+        <div style={styles.kicker}>TEPIH SERVIS SUPER CLEAN</div>
+        <div style={styles.line}/>
+        <h1 style={styles.title}>Dobro došli!</h1>
+        <p style={styles.subtitle}>Prijavite se u svoj nalog</p>
+
+        <div className="superclean-login-field" style={styles.field}>
+          <span style={styles.iconWrap}><UserRound size={24}/></span>
+          <input style={styles.input} placeholder="Korisničko ime" defaultValue="Administrator" autoComplete="username" />
+        </div>
+
+        <div className="superclean-login-field" style={styles.field}>
+          <span style={styles.iconWrap}><LockKeyhole size={24}/></span>
+          <input style={styles.input} placeholder="Šifra" type={showPassword ? "text" : "password"} defaultValue="superclean" autoComplete="current-password" />
+          <button type="button" style={styles.eye} onClick={()=>setShowPassword(!showPassword)} aria-label={showPassword ? "Sakrij šifru" : "Prikaži šifru"}>
+            {showPassword ? <EyeOff size={25}/> : <Eye size={25}/>} 
+          </button>
+        </div>
+
+        <button className="superclean-login-button" style={styles.button} onClick={onLogin} type="button"><LogIn size={27}/> Prijava</button>
+
+        <label style={styles.rememberRow}>
+          <input style={styles.check} type="checkbox" checked={remember} onChange={e=>setRemember(e.target.checked)} />
+          <span>Zapamti šifru</span>
+        </label>
+
+        <div style={styles.wave}/>
+      </div>
+
+      <div className="superclean-login-slogan" style={styles.slogan}>Čist prostor, zdraviji dom!</div>
+    </div>
+  </>
   );
 }
 
@@ -272,105 +278,4 @@ function Invoices({db,commit}){
     {edit?.search&&<div className="search-panel"><Search/><input autoFocus placeholder="Pretraži račun..." onKeyDown={e=>e.key==="Enter"&&setEdit(null)}/><button onClick={()=>setEdit(null)}>Zatvori</button></div>}
     {edit&&!edit.search&&<FormCard title={`Račun ${edit.no?`2026/${edit.no}`:"novi"}`} onCancel={()=>setEdit(null)} onSubmit={save} submit="Snimi račun">
       <Field name="customer" label="Kupac" defaultValue={edit.customer}/><Field name="date" label="Datum" type="date" defaultValue={edit.date||today()}/>
-      <SelectField name="payment" label="Način plaćanja" options={["Gotovinski","Žiralno"]} defaultValue={edit.payment||"Gotovinski"}/>
-      <Field name="total" label="Ukupno" type="number" step="0.01" defaultValue={edit.total||0}/>
-      <div className="form-wide"><button type="button" className="secondary">Dodaj stavku +</button><button type="button" className="secondary">Dostava</button><button type="button" className="danger">Storniraj račun</button><button type="button" className="secondary"><Printer size={16}/> Printaj</button></div>
-    </FormCard>}
-    <Table columns={[["no","Broj računa"],["customer","Kupac"],["date","Datum"],["payment","Plaćanje"],["total","Ukupno"],["status","Status"]]} rows={rows} onRow={setEdit}/>
-    <div className="print-note"><ReceiptText/> A4 račun i odrezak kupca na dnu stranice predviđeni su u modulu dokumenata/štampe.</div>
-  </Module>
-}
-
-function CashDesk({db,commit}){
-  const toggle=(inv)=>{const payments=[...db.payments];const p=payments.find(x=>x.invoiceId===inv.id);if(p)p.paid=!p.paid;else payments.push({invoiceId:inv.id,paid:true,at:new Date().toISOString(),by:"Administrator"});commit({...db,payments},"Status blagajne sačuvan")};
-  return <Module title="Blagajna" subtitle="Evidencija svih računa i naplate bez brisanja dokaza.">
-    <Toolbar onAdd={()=>{}} onSearch={()=>{}} onRefresh={()=>{}}/>
-    <Table columns={[["no","Račun"],["customer","Kupac"],["total","Iznos"],["payment","Način"],["paid","Plaćeno"],["audit","Evidencija"]]}
-
-    
-rows={db.invoices.map(i=>{const p=db.payments.find(x=>x.invoiceId===i.id);return {...i,total:money(i.total),paid:p?.paid?"Da":"Ne",audit:p?.by?`${p.by} • ${new Date(p.at).toLocaleString("bs-BA")}`:""}})}
-
-onRow={()=>{}}
-/>      
- </Module>
-}   
-
-function Reports({db}){
-  const cash=db.invoices.filter(x=>x.payment==="Gotovinski"&&x.status!=="storno").reduce((a,x)=>a+Number(x.total||0),0);
-  const bank=db.invoices.filter(x=>x.payment==="Žiralno"&&x.status!=="storno").reduce((a,x)=>a+Number(x.total||0),0);
-  return <Module title="Izvještaji" subtitle="Dan, godina, mjesec, kupac, tepih, m² i način plaćanja.">
-    <Toolbar onAdd={()=>{}} onSearch={()=>{}} onRefresh={()=>{}}/>
-    <div className="report-grid"><div><span>Promet po danu</span><b>{money(cash+bank)}</b></div><div><span>Promet mjeseca</span><b>{money(cash+bank)}</b></div><div><span>Gotovinski</span><b>{money(cash)}</b></div><div><span>Žiralno</span><b>{money(bank)}</b></div></div>
-    <div className="filters"><CalendarDays/><select><option>Dan</option></select><select><option>Godina</option><option>2026</option></select><select><option>Mjesec</option></select><select><option>Kupac</option></select><select><option>Tepih</option></select></div>
-    <Table columns={[["date","Datum"],["customer","Kupac"],["no","Račun"],["total","Ukupno"],["payment","Plaćanje"]]} rows={db.invoices.map(x=>({...x,total:money(x.total)}))}/>
-  </Module>
-}
-
-function Routes({db,commit}){
-  const [edit,setEdit]=useState(null);
-  const save=(e)=>{e.preventDefault();const f=new FormData(e.currentTarget);const v={id:edit?.id||crypto.randomUUID(),name:f.get("name"),driver:f.get("driver"),plate:f.get("plate")};commit({...db,vehicles:edit?.id?db.vehicles.map(x=>x.id===edit.id?v:x):[...db.vehicles,v]},"Vozilo sačuvano");setEdit(null)};
-  return <Module title="Ruta" subtitle="Narudžbe i računi se raspoređuju na Vozilo 1, 2, 3 i dalje.">
-    <Toolbar onAdd={()=>setEdit({})} onSearch={()=>{}} onRefresh={()=>{}}/>
-    {edit!==null&&<FormCard title="Novo vozilo" onCancel={()=>setEdit(null)} onSubmit={save} submit="Snimi vozilo"><Field name="name" label="Vozilo 1 / ime vozila" defaultValue={edit.name}/><Field name="driver" label="Ime i prezime / vozač" defaultValue={edit.driver}/><Field name="plate" label="Reg. oznaka" defaultValue={edit.plate}/><button type="button" className="danger">Obriši vozilo</button></FormCard>}
-    <div className="vehicle-grid">{[...Array(Math.max(3,db.vehicles.length))].map((_,i)=>{const v=db.vehicles[i];return <div className="vehicle" key={i} onClick={()=>v&&setEdit(v)}><Car/><b>{v?.name||`Vozilo ${i+1}`}</b><span>{v?.driver||"Nije podešeno"}</span><small>{v?.plate||""}</small></div>})}</div>
-  </Module>
-}
-
-function Gari({db,commit}){
-  const [rows,setRows]=useState([]),[date,setDate]=useState(today()),[price,setPrice]=useState(5),[name,setName]=useState("Gari");
-  const [l,setL]=useState(""),[w,setW]=useState("");
-  const add=()=>{const a=Number(l||0),b=Number(w||0);if(!a||!b)return;setRows([...rows,{id:Date.now(),l:a,w:b,m2:a*b}]);setL("");setW("")};
-  const total=rows.reduce((a,x)=>a+x.m2,0);
-  return <Module title="GARI" subtitle="Interna evidencija; ne ulazi automatski u Kupce/Narudžbe/Račune/Blagajnu.">
-    <Toolbar onAdd={add} onSearch={()=>{}} onRefresh={()=>setRows([])}/>
-    <div className="gari-head"><Field name="gari-name" label="Naziv" value={name} onChange={e=>setName(e.target.value)}/><Field name="gari-date" label="Datum" type="date" value={date} onChange={e=>setDate(e.target.value)}/><Field name="gari-price" label="Cijena po m²" type="number" value={price} onChange={e=>setPrice(e.target.value)}/></div>
-    <div className="inline-add"><input placeholder="Dužina" value={l} onChange={e=>setL(e.target.value)}/><input placeholder="Širina" value={w} onChange={e=>setW(e.target.value)}/><button className="primary" onClick={add}>Dodaj</button></div>
-    <Table columns={[["l","Dužina"],["w","Širina"],["m2","m²"]]} rows={rows}/>
-    <div className="total-bar"><b>Ukupno m²: {total.toFixed(2)}</b><b>Ukupno: {money(total*price)}</b><button className="primary" onClick={()=>alert("GARI evidencija spremna za print.")}>Print</button></div>
-  </Module>
-}
-
-function QrWindow({db}){
-  const [value,setValue]=useState("");
-  return <Module title="QR KOD" subtitle="Skeniranje etikete otvara tačnu narudžbu i tepih.">
-    <div className="qr-box"><QrCode size={72}/><h2>Skeniraj QR kod</h2><p>Na telefonu kamera može otvoriti skener etikete.</p><button className="primary" onClick={()=>alert("Kamera/skener će se uključiti kada se instalira QR scanner komponenta.")}>Pokreni skener</button><input value={value} onChange={e=>setValue(e.target.value)} placeholder="Ili unesi sigurni ID QR koda"/>{value&&<div className="qr-result">Referenca: <b>{value}</b></div>}</div>
-  </Module>
-}
-
-function Administrator({db,commit}){
-  const [tab,setTab]=useState("korisnici");
-  const tabs=[
-    ["korisnici","Korisnici",Users],["dozvole","Dozvole",Shield],["aktivnost","Evidencija aktivnosti",ReceiptText],
-    ["tema","Teme i izgled",Palette],["logo","Logo",ImageIcon],["prozori","Prozori i moduli",SlidersHorizontal],
-    ["veze","Veze između modula",Link2],["dokumenti","Dokumenti",FileText],["izvjestaji","Izvještaji",BarChart3],
-    ["blagajna","Blagajna",Wallet],["cjenovnik","Cjenovnik",Tags],["ruta","Ruta i vozila",Car],
-    ["qr","QR i etikete",QrCode],["opste","Opšte postavke",Settings],["sigurnost","Sigurnost",Shield]
-  ];
-  return <Module title="Administrator" subtitle="Centralna kontrola: korisnici, dozvole, izgled, moduli, dokumenti i sigurnost.">
-    <div className="admin-grid">
-      <div className="admin-menu">{tabs.map(([id,l,I])=><button className={tab===id?"active":""} onClick={()=>setTab(id)} key={id}><I size={18}/>{l}</button>)}</div>
-      <div className="admin-panel">
-        {tab==="tema"&&<ThemeSettings db={db} commit={commit}/>}
-        {tab==="logo"&&<LogoSettings/>}
-        {tab==="cjenovnik"&&<PriceAdmin db={db} commit={commit}/>}
-        {tab==="dozvole"&&<Permissions/>}
-        {tab==="aktivnost"&&<div className="info-card"><b>Evidencija aktivnosti</b><span>Korisnik, radnja, dokument, stare/nove vrijednosti i datum/vrijeme predviđeni su kao centralni audit zapis.</span></div>}
-        {tab!=="tema"&&tab!=="logo"&&tab!=="cjenovnik"&&tab!=="dozvole"&&<div className="info-card"><b>{tabs.find(x=>x[0]===tab)?.[1]}</b><span>Kontrolni panel je predviđen u novoj arhitekturi i vezan za administratorske dozvole.</span></div>}
-      </div>
-    </div>
-  </Module>
-}
-function ThemeSettings({db,commit}){
-  const themes=["clean-blue","ocean","mint","graphite","royal","sand","forest","sky"];
-  return <div><h2>Teme i izgled</h2><p>Administrator može birati gotovu temu i kasnije proširivati biblioteku.</p><div className="theme-list">{themes.map(t=><button key={t} className={db.settings.theme===t?"chosen":""} onClick={()=>commit({...db,settings:{...db.settings,theme:t}})}>{t}</button>)}</div></div>
-}
-function LogoSettings(){return <div><h2>Logo</h2><div className="logo-setting"><img src="/assets/logo.png"/><div><p>Jedinstveni logo se koristi na početnoj, dokumentima i etiketama.</p><input type="file" accept="image/png,image/jpeg,image/webp"/><div className="seg"><button>← Lijevo</button><button>Centar</button><button>Desno →</button></div></div></div></div>}
-function PriceAdmin({db,commit}){return <div><h2>Cjenovnik — administratorske postavke</h2><Field name="delivery" label="Cijena dostave" type="number" defaultValue={db.settings.deliveryPrice} onBlur={e=>commit({...db,settings:{...db.settings,deliveryPrice:Number(e.target.value)}},"Cijena dostave sačuvana")}/><p>Administrator može uređivati polja, cijene, kategorije, ikone, fontove, boje, dugmad i dozvole modula.</p></div>}
-function Permissions(){return <div><h2>Dozvole</h2><Table columns={[["role","Uloga"],["see","Vidi"],["add","Dodaj"],["edit","Izmijeni"],["delete","Ukloni"],["print","Print"],["export","Izvoz"],["special","Posebne radnje"]]} rows={[{role:"Administrator",see:"✓",add:"✓",edit:"✓",delete:"✓",print:"✓",export:"✓",special:"Sve"},{role:"Blagajnik",see:"✓",add:"—",edit:"—",delete:"—",print:"✓",export:"—",special:"Plaćeno / neplaćeno"}]}/></div>}
-
-function Module({title,subtitle,children}){return <section className="module"><div className="module-head"><div><h1>{title}</h1><p>{subtitle}</p></div></div>{children}</section>}
-function FormCard({title,children,onCancel,onSubmit,submit="Sačuvaj"}){return <form className="form-card" onSubmit={onSubmit}><div className="form-head"><h2>{title}</h2></div><div className="form-grid">{children}</div><div className="form-actions"><button type="button" className="secondary" onClick={onCancel}><Ban size={16}/> Otkaži</button><button className="primary" type="submit"><Check size={16}/> {submit}</button></div></form>}
-function Field({label,name,type="text",...props}){return <label className="field"><span>{label}</span><input name={name} type={type} {...props}/></label>}
-function SelectField({label,name,options,defaultValue}){return <label className="field"><span>{label}</span><select name={name} defaultValue={defaultValue}>{options.map(o=><option key={o}>{o}</option>)}</select></label>}
-
-createRoot(document.getElementById("root")).render(<App/>);
+      <SelectField name="payment" label="Način plaćanja" options={["Gotovinski","Žiralno"]} defaultValue={edi
