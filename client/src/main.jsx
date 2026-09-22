@@ -121,7 +121,45 @@ function Login({onLogin}){
             autoComplete="username"
           />
         </div>
+        <div className="login-field">
+          <span className="login-icon">🔒</span>
+          <input
+            placeholder="Šifra"
+            type={showPassword ? "text" : "password"}
+            defaultValue="superclean"
+            autoComplete="current-password"
+          />
 
+          <button
+            type="button"
+            className="password-toggle"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? "◉" : "◌"}
+          </button>
+        </div>
+
+        <button className="primary big login-button" onClick={onLogin}>
+          ↪&nbsp; Prijava
+        </button>
+
+        <label className="remember-password">
+          <input
+            type="checkbox"
+            checked={remember}
+            onChange={(e) => setRemember(e.target.checked)}
+          />
+          <span>Zapamti šifru</span>
+        </label>
+
+        <div className="login-wave">
+          <div>Tepih servis Super Clean</div>
+          <div>v1.0</div>
+        </div>
+      </div>
+    </div>
+  );
+}
 function HomePage({db,nav}){
   const stats=[
     ["Kupci",db.customers.length,"kupci",Users],["Narudžbe",db.orders.length,"narudzbe",ClipboardList],
