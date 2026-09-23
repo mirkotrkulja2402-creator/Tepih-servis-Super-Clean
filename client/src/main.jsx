@@ -510,54 +510,7 @@ function Login({onLogin}){
       }
     }
   `;
-
-  return <>
-    <style>{css}</style>
-    <div className="superclean-login-page">
-      <div className="superclean-login-top">
-        <img className="superclean-login-logo" src="/assets/logo.png" alt="Tepih servis Super Clean"/>
-      </div>
-
-      <div className="superclean-login-card">
-        <div className="superclean-login-kicker">TEPIH SERVIS SUPER CLEAN</div>
-        <h1 className="superclean-login-title">Dobro došli!</h1>
-        <p className="superclean-login-subtitle">Prijavite se u svoj nalog</p>
-
-        <div className="superclean-login-usericon"><UserRound size={30}/></div>
-
-        <div className="superclean-login-field">
-          <span className="superclean-login-field-icon"><UserRound size={31}/></span>
-          <input className="superclean-login-input" defaultValue="Administrator" autoComplete="username"/>
-        </div>
-
-        <div className="superclean-login-field">
-          <span className="superclean-login-field-icon"><LockKeyhole size={31}/></span>
-          <input className="superclean-login-input" type={showPassword ? "text" : "password"} defaultValue="admin" autoComplete="current-password"/>
-          <button type="button" className="superclean-login-eye" onClick={()=>setShowPassword(!showPassword)}>
-            {showPassword ? <EyeOff size={31}/> : <Eye size={31}/>}
-          </button>
-        </div>
-
-        <button type="button" className="superclean-login-button" onClick={onLogin}>
-          <LogIn size={34}/>Prijava
-        </button>
-
-        <label className="superclean-login-remember">
-          <input className="superclean-login-check" type="checkbox" checked={remember} onChange={e=>setRemember(e.target.checked)}/>
-          Zapamti šifru
-        </label>
-
-        <div className="superclean-login-footer">
-          <span className="superclean-login-footer-text">Tepih servis Super Clean</span>
-          <span className="superclean-login-version">v1.0</span>
-        </div>
-      </div>
-
-      <div className="superclean-login-slogan">Čist prostor, zdraviji dom!</div>
-    </div>
-  </>;
-}
-           
+              
   return <>
     <style>{css}</style>
 
