@@ -658,7 +658,6 @@ function Login({onLogin}){
 
     </div>
   </>;
-}
 
 function HomePage({db,nav}){
   const stats=[
