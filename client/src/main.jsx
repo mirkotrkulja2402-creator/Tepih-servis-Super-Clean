@@ -533,6 +533,10 @@ function Login({onLogin}){
           Prijavite se u svoj nalog
         </p>
 
+        <div className="superclean-login-usericon">
+  <UserRound size={30}/>
+</div>
+        
         <div className="superclean-login-field">
           <span className="superclean-login-field-icon">
             <UserRound size={31}/>
