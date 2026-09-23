@@ -104,47 +104,77 @@ function Login({onLogin}){
   const css=`
     .superclean-login-page{
       width:100%;
-      height:100dvh;
+      min-height:100dvh;
       box-sizing:border-box;
       overflow:hidden;
       display:flex;
       flex-direction:column;
       align-items:center;
-      padding:0;
-      background:#eef8ff;
+      background:linear-gradient(180deg,#ffffff 0%,#eef8ff 78%,#e5f5ff 100%);
       color:#17375d;
       font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+      position:relative;
     }
 
     .superclean-login-top{
       width:100%;
-      height:455px;
-      flex:0 0 455px;
-      display:flex;
-      justify-content:center;
-      align-items:flex-start;
+      height:390px;
+      flex:0 0 390px;
       box-sizing:border-box;
-      padding:0;
-      background:#eef8ff url("/assets/login-bg-vacuum.jpg")
-        center top / 100% auto no-repeat;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      position:relative;
+      overflow:hidden;
+      background:linear-gradient(180deg,#ffffff 0%,#eef8ff 78%,#e5f5ff 100%);
+    }
+
+    .superclean-login-top:before{
+      content:"";
+      position:absolute;
+      left:-10%;
+      right:-10%;
+      bottom:38px;
+      height:135px;
+      background:#36abe8;
+      border-radius:50% 50% 0 0/55% 55% 0 0;
+      transform:rotate(-2deg);
+    }
+
+    .superclean-login-top:after{
+      content:"";
+      position:absolute;
+      left:-10%;
+      right:-10%;
+      bottom:-18px;
+      height:95px;
+      background:#168cdd;
+      border-radius:50% 50% 0 0/60% 60% 0 0;
+      transform:rotate(1deg);
     }
 
     .superclean-login-logo{
-      display:none;
+      display:block;
+      width:min(430px,72vw);
+      max-height:260px;
+      object-fit:contain;
+      margin-top:28px;
+      position:relative;
+      z-index:2;
     }
 
     .superclean-login-card{
       width:min(760px,86vw);
       box-sizing:border-box;
-      background:rgba(255,255,255,.97);
-      border:1px solid rgba(120,165,195,.25);
+      background:rgba(255,255,255,.985);
+      border:1px solid rgba(120,165,195,.24);
       border-radius:34px;
       box-shadow:0 18px 45px rgba(31,96,137,.18);
-      padding:46px 50px 0;
+      padding:42px 50px 0;
       position:relative;
-      z-index:3;
+      z-index:4;
       flex:0 0 auto;
-      margin-top:-36px;
+      margin-top:-92px;
     }
 
     .superclean-login-kicker{
@@ -156,7 +186,7 @@ function Login({onLogin}){
       font-size:20px;
       letter-spacing:2.5px;
       font-weight:500;
-      margin:0 0 28px;
+      margin:0 0 24px;
       text-align:center;
       white-space:nowrap;
     }
@@ -166,7 +196,7 @@ function Login({onLogin}){
       content:"";
       display:block;
       width:50px;
-      height:4px;
+      height:3px;
       border-radius:4px;
       background:#178bdc;
       flex:0 0 auto;
@@ -182,7 +212,7 @@ function Login({onLogin}){
     }
 
     .superclean-login-subtitle{
-      margin:22px 0 22px;
+      margin:18px 0 22px;
       text-align:center;
       color:#8192a4;
       font-size:clamp(22px,3vw,30px);
@@ -193,7 +223,7 @@ function Login({onLogin}){
       width:58px;
       height:58px;
       border-radius:50%;
-      margin:0 auto 26px;
+      margin:0 auto 22px;
       display:grid;
       place-items:center;
       background:#e9f6ff;
@@ -204,7 +234,7 @@ function Login({onLogin}){
       width:100%;
       height:70px;
       box-sizing:border-box;
-      margin-bottom:20px;
+      margin-bottom:18px;
       border:2px solid #d8e3eb;
       border-radius:20px;
       background:#fff;
@@ -246,7 +276,7 @@ function Login({onLogin}){
 
     .superclean-login-button{
       width:100%;
-      height:76px;
+      height:74px;
       border:0;
       border-radius:20px;
       background:linear-gradient(135deg,#1695e7,#0878d0);
@@ -266,7 +296,7 @@ function Login({onLogin}){
       display:flex;
       align-items:center;
       gap:14px;
-      margin:22px 0 34px;
+      margin:19px 0 31px;
       color:#536b83;
       font-size:22px;
       cursor:pointer;
@@ -281,13 +311,10 @@ function Login({onLogin}){
 
     .superclean-login-footer{
       margin:0 -50px;
-      height:112px;
+      height:105px;
       position:relative;
       overflow:hidden;
       border-radius:0 0 34px 34px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
       box-sizing:border-box;
     }
 
@@ -296,10 +323,10 @@ function Login({onLogin}){
       position:absolute;
       left:-5%;
       right:-5%;
-      bottom:-28px;
-      height:78px;
+      bottom:-30px;
+      height:86px;
       background:#158de0;
-      border-radius:50% 50% 0 0/35% 35% 0 0;
+      border-radius:50% 50% 0 0/42% 42% 0 0;
       transform:rotate(-1deg);
     }
 
@@ -308,8 +335,8 @@ function Login({onLogin}){
       position:absolute;
       left:-5%;
       right:-5%;
-      bottom:36px;
-      height:27px;
+      bottom:34px;
+      height:28px;
       background:#55c66b;
       border-radius:50% 50% 0 0/70% 70% 0 0;
       transform:rotate(2deg);
@@ -321,27 +348,33 @@ function Login({onLogin}){
     }
 
     .superclean-login-slogan{
-      margin-top:34px;
+      margin-top:24px;
       text-align:center;
       font-family:Georgia,serif;
       font-style:italic;
       font-size:clamp(25px,4vw,38px);
       color:#1685d3;
       padding:0 12px;
+      position:relative;
+      z-index:2;
     }
 
     @media(max-width:700px){
       .superclean-login-top{
-        height:455px;
-        flex-basis:455px;
-        background-size:100% auto;
-        background-position:center top;
+        height:390px;
+        flex-basis:390px;
+      }
+
+      .superclean-login-logo{
+        width:min(330px,70vw);
+        max-height:205px;
+        margin-top:24px;
       }
 
       .superclean-login-card{
         width:86vw;
-        margin-top:-36px;
-        padding:31px 5vw 0;
+        margin-top:-92px;
+        padding:28px 5vw 0;
         border-radius:30px;
       }
 
@@ -349,130 +382,182 @@ function Login({onLogin}){
         font-size:clamp(13px,2.5vw,17px);
         letter-spacing:1.8px;
         gap:12px;
-        margin-bottom:22px;
+        margin-bottom:18px;
       }
 
       .superclean-login-kicker:before,
       .superclean-login-kicker:after{
         width:34px;
-        height:4px;
+        height:3px;
       }
 
       .superclean-login-title{
-        font-size:clamp(44px,6.7vw,52px);
+        font-size:clamp(42px,6.7vw,52px);
       }
 
       .superclean-login-subtitle{
-        font-size:clamp(20px,3vw,24px);
-        margin:17px 0 20px;
+        font-size:clamp(19px,3vw,24px);
+        margin:14px 0 18px;
       }
 
       .superclean-login-usericon{
-        width:54px;
-        height:54px;
-        margin-bottom:24px;
+        width:52px;
+        height:52px;
+        margin-bottom:19px;
       }
 
       .superclean-login-field{
-        height:68px;
-        margin-bottom:19px;
+        height:62px;
+        margin-bottom:16px;
         padding:0 13px;
         border-radius:18px;
       }
 
       .superclean-login-field-icon{
-        width:38px;
-        height:38px;
+        width:36px;
+        height:36px;
         padding-right:13px;
       }
 
       .superclean-login-input{
-        font-size:20px;
+        font-size:19px;
         padding:0 13px;
       }
 
       .superclean-login-eye svg{
-        width:27px;
-        height:27px;
+        width:26px;
+        height:26px;
       }
 
       .superclean-login-button{
-        height:70px;
+        height:64px;
         border-radius:18px;
-        font-size:27px;
+        font-size:25px;
         gap:11px;
       }
 
       .superclean-login-remember{
-        font-size:20px;
-        gap:11px;
-        margin:20px 0 34px;
+        font-size:19px;
+        gap:10px;
+        margin:17px 0 27px;
       }
 
       .superclean-login-check{
-        width:25px;
-        height:25px;
+        width:24px;
+        height:24px;
       }
 
       .superclean-login-footer{
         margin:0 -5vw;
-        height:108px;
+        height:92px;
         border-radius:0 0 30px 30px;
       }
 
       .superclean-login-slogan{
-        margin-top:28px;
-        font-size:clamp(22px,4vw,28px);
+        margin-top:24px;
+        font-size:clamp(21px,4vw,28px);
       }
     }
 
     @media(max-width:390px){
       .superclean-login-top{
-        height:390px;
-        flex-basis:390px;
+        height:350px;
+        flex-basis:350px;
+      }
+
+      .superclean-login-logo{
+        width:72vw;
+        margin-top:20px;
       }
 
       .superclean-login-card{
         width:90vw;
-        margin-top:-30px;
-        padding:25px 4vw 0;
+        margin-top:-78px;
+        padding:23px 4vw 0;
       }
 
       .superclean-login-kicker{
-        font-size:12px;
-        gap:8px;
-        letter-spacing:1.2px;
+        font-size:11px;
+        gap:7px;
+        letter-spacing:1px;
       }
 
       .superclean-login-kicker:before,
       .superclean-login-kicker:after{
-        width:28px;
+        width:25px;
       }
 
       .superclean-login-title{
-        font-size:37px;
+        font-size:36px;
       }
 
       .superclean-login-subtitle{
-        font-size:18px;
+        font-size:17px;
       }
 
       .superclean-login-field{
-        height:58px;
+        height:55px;
       }
 
       .superclean-login-button{
-        height:60px;
-        font-size:23px;
+        height:56px;
+        font-size:22px;
       }
 
       .superclean-login-footer{
         margin:0 -4vw;
-        height:86px;
+        height:78px;
       }
     }
   `;
 
+  return <>
+    <style>{css}</style>
+    <div className="superclean-login-page">
+      <div className="superclean-login-top">
+        <img className="superclean-login-logo" src="/assets/logo.png" alt="Tepih servis Super Clean"/>
+      </div>
+
+      <div className="superclean-login-card">
+        <div className="superclean-login-kicker">TEPIH SERVIS SUPER CLEAN</div>
+        <h1 className="superclean-login-title">Dobro došli!</h1>
+        <p className="superclean-login-subtitle">Prijavite se u svoj nalog</p>
+
+        <div className="superclean-login-usericon"><UserRound size={30}/></div>
+
+        <div className="superclean-login-field">
+          <span className="superclean-login-field-icon"><UserRound size={31}/></span>
+          <input className="superclean-login-input" defaultValue="Administrator" autoComplete="username"/>
+        </div>
+
+        <div className="superclean-login-field">
+          <span className="superclean-login-field-icon"><LockKeyhole size={31}/></span>
+          <input className="superclean-login-input" type={showPassword ? "text" : "password"} defaultValue="admin" autoComplete="current-password"/>
+          <button type="button" className="superclean-login-eye" onClick={()=>setShowPassword(!showPassword)}>
+            {showPassword ? <EyeOff size={31}/> : <Eye size={31}/>}
+          </button>
+        </div>
+
+        <button type="button" className="superclean-login-button" onClick={onLogin}>
+          <LogIn size={34}/>Prijava
+        </button>
+
+        <label className="superclean-login-remember">
+          <input className="superclean-login-check" type="checkbox" checked={remember} onChange={e=>setRemember(e.target.checked)}/>
+          Zapamti šifru
+        </label>
+
+        <div className="superclean-login-footer">
+          <span className="superclean-login-footer-text">Tepih servis Super Clean</span>
+          <span className="superclean-login-version">v1.0</span>
+        </div>
+      </div>
+
+      <div className="superclean-login-slogan">Čist prostor, zdraviji dom!</div>
+    </div>
+  </>;
+}
+           
   return <>
     <style>{css}</style>
 
