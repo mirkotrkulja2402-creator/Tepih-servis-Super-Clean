@@ -25,8 +25,15 @@ const cities = [
 ];
 
 const actionDefs = [
-  ["Dodaj",Plus],["Ukloni",Trash2],["Izmijeni",Pencil],["Pretraga",Search],
-  ["Osvježi",RefreshCw],["PDF",FileDown],["Print",Printer],["Izvoz",Download],["Uvoz",Upload]
+  ["Dodaj",Plus],
+  ["Ukloni",Trash2],
+  ["Izmijeni",Pencil],
+  ["Pretraga",Search],
+  ["Osvježi",RefreshCw],
+  ["PDF",FileDown],
+  ["Print",Printer],
+  ["Izvoz",Download],
+  ["Uvoz",Upload]
 ];
 
 const seed = {
