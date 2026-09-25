@@ -618,10 +618,34 @@ function HomePage({db,nav}){
   </div>
 }
 
-function Toolbar({onAdd,onSearch,onRefresh,title}){
-  return <div className="toolbar">
-    {actionDefs.map(([label,I])=><button key={label} onClick={()=> label==="Dodaj"?onAdd?.():label==="Pretraga"?onSearch?.():label==="Osvježi"?onRefresh?.():null}><I size={17}/><span>{label}</span></button>)}
-  </div>
+function Toolbar({onAdd,onSearch,onRefresh,title,onDelete,onEdit,onPdf,onPrint,onExport,onImport}){
+  const actions = {
+    Dodaj: onAdd,
+    Ukloni: onDelete,
+    Izmijeni: onEdit,
+    Pretraga: onSearch,
+    Osvježi: onRefresh,
+    PDF: onPdf,
+    Print: onPrint,
+    Izvoz: onExport,
+    Uvoz: onImport
+  };
+
+  return (
+    <div className="toolbar">
+      {actionDefs.map(([label,I]) => (
+        <button
+          key={label}
+          type="button"
+          onClick={actions[label] || undefined}
+          title={label}
+        >
+          <I size={17}/>
+          <span>{label}</span>
+        </button>
+      ))}
+    </div>
+  );
 }
 
 function Table({columns,rows,onRow}){return <div className="table-wrap"><table><thead><tr>{columns.map(c=><th key={c[0]}>{c[1]}</th>)}</tr></thead><tbody>{rows.length?rows.map((r,i)=><tr key={r.id||i} onClick={()=>onRow?.(r)}>{columns.map(([k])=><td key={k}>{r[k]??"—"}</td>)}</tr>):<tr><td colSpan={columns.length} className="empty">Nema zapisa.</td></tr>}</tbody></table></div>}
