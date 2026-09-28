@@ -618,7 +618,18 @@ function HomePage({db,nav}){
   </div>
 }
 
-function Toolbar({onAdd,onSearch,onRefresh,title,onDelete,onEdit,onPdf,onPrint,onExport,onImport}){
+function Toolbar({
+  onAdd,
+  onSearch,
+  onRefresh,
+  title,
+  onDelete,
+  onEdit,
+  onPdf,
+  onPrint,
+  onExport,
+  onImport
+}) {
   const actions = {
     Dodaj: onAdd,
     Ukloni: onDelete,
@@ -630,6 +641,23 @@ function Toolbar({onAdd,onSearch,onRefresh,title,onDelete,onEdit,onPdf,onPrint,o
     Izvoz: onExport,
     Uvoz: onImport
   };
+
+  return (
+    <div className="toolbar">
+      {actionDefs.map(([label, I]) => (
+        <button
+          key={label}
+          type="button"
+          onClick={actions[label] || undefined}
+          title={label}
+        >
+          <I size={17} strokeWidth={2.2} />
+          <span>{label}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
 
   return (
     <div className="toolbar">
