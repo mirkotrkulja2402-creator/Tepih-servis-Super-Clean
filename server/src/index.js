@@ -73,27 +73,7 @@ app.get("/sw.js", (_req, res) => {
 });
 
 app.use(express.static(clientDist));
-app.get("*", (_req, res) => res.sendFile(path.join(clientDist, "index.html")));
-
-app.get("/api/status", async (_req, res) => {
-  let database = "nije povezano";
-
-  if (pool) {
-    try {
-      await pool.query("SELECT 1");
-      database = "PostgreSQL povezan";
-    } catch {
-      database = "PostgreSQL greška";
-    }
-  }
-
-  res.json({
-    ok: true,
-    app: "Tepih servis Super Clean",
-    server: "online",
-    database,
-  });
-});
+app.get("*", (_req, res) => res.sendFile(path.join(clientDist, "index.html")))
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Super Clean server listening on ${port}`));
