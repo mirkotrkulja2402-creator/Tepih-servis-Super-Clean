@@ -662,20 +662,118 @@ function Toolbar({
 function Table({columns,rows,onRow}){return <div className="table-wrap"><table><thead><tr>{columns.map(c=><th key={c[0]}>{c[1]}</th>)}</tr></thead><tbody>{rows.length?rows.map((r,i)=><tr key={r.id||i} onClick={()=>onRow?.(r)}>{columns.map(([k])=><td key={k}>{r[k]??"—"}</td>)}</tr>):<tr><td colSpan={columns.length} className="empty">Nema zapisa.</td></tr>}</tbody></table></div>}
 
 function PriceList({db,commit}){
-  const [edit,setEdit]=useState(null), [q,setQ]=useState("");
-  const rows=db.priceList.filter(x=>x.name.toLowerCase().includes(q.toLowerCase()));
-  const saveItem=(e)=>{e.preventDefault();const f=new FormData(e.currentTarget);const item={id:edit?.id||nextNo(db.priceList),name:f.get("name"),unit:f.get("unit"),price:Number(f.get("price")),category:f.get("category")};commit({...db,priceList:edit?db.priceList.map(x=>x.id===edit.id?item:x):[...db.priceList,item]},"Cjenovnik sačuvan");setEdit(null)};
-  return <Module title="Cjenovnik" subtitle="Usluge, artikli, mjerne jedinice i cijene.">
-    <Toolbar onAdd={()=>setEdit({})} onSearch={()=>setQ(prompt("Pretraga cjenovnika:")||"")} onRefresh={()=>setQ("")}/>
-    {edit!==null&&<FormCard title={edit.id?"Izmijeni stavku":"Nova stavka"} onCancel={()=>setEdit(null)} onSubmit={saveItem}>
-      <Field name="name" label="Naziv / usluga / artikal" defaultValue={edit.name}/><Field name="unit" label="Mjerna jedinica" defaultValue={edit.unit||"m²"} placeholder="m², kom, sat..."/>
-      <Field name="price" label="Cijena" type="number" step="0.01" defaultValue={edit.price||0}/><Field name="category" label="Kategorija" defaultValue={edit.category||"Pranje"}/>
-    </FormCard>}
-    <Table columns={[["name","Naziv / usluga / artikal"],["unit","Mjerna jedinica"],["price","Cijena"],["category","Kategorija"]]} rows={rows.map(x=>({...x,price:money(x.price)}))} onRow={setEdit}/>
-    <div className="info-card"><b>+ Dostava</b><span>Trenutno podešeno: {money(db.settings.deliveryPrice)}. Promjena je pod Administrator → Cjenovnik.</span></div>
+  const [edit,setEdit]=useState(null), [selected,setSelected]=useState(null), [q,setQ]=useState("");
+
+  const rows=db.priceList.filter(x=>
+    (x.name+" "+x.category+" "+x.unit).toLowerCase().includes(q.toLowerCase())
+  );
+
+  const remove=()=>{
+    if(!selected)return;
+    commit(
+      {...db,priceList:db.priceList.filter(x=>x.id!==selected.id)},
+      "Stavka uklonjena"
+    );
+    setSelected(null);
+    setEdit(null);
+  };
+
+  const saveItem=(e)=>{
+    e.preventDefault();
+    const f=new FormData(e.currentTarget);
+
+    const item={
+      id:edit?.id||nextNo(db.priceList),
+      name:f.get("name"),
+      unit:f.get("unit"),
+      price:Number(f.get("price")||0),
+      category:f.get("category")
+    };
+
+    commit(
+      {
+        ...db,
+        priceList:edit
+          ? db.priceList.map(x=>x.id===edit.id?item:x)
+          : [...db.priceList,item]
+      },
+      "Cjenovnik sačuvan"
+    );
+
+    setSelected(item);
+    setEdit(null);
+  };
+
+  return <Module
+    title="Cjenovnik"
+    subtitle="Usluge, mjerne jedinice i cijene."
+  >
+    <Toolbar
+      onAdd={()=>{setSelected(null);setEdit({})}}
+      onDelete={remove}
+      onEdit={()=>selected&&setEdit(selected)}
+      onSearch={()=>setQ(prompt("Pretraga cjenovnika:")||"")}
+      onRefresh={()=>setQ("")}
+    />
+
+    {edit!==null&&
+      <FormCard
+        title={edit.id?"Izmijeni stavku":"Nova stavka"}
+        onCancel={()=>setEdit(null)}
+        onSubmit={saveItem}
+      >
+        <Field
+          name="name"
+          label="Naziv / usluga / artikal"
+          defaultValue={edit.name}
+        />
+
+        <SelectField
+          name="unit"
+          label="Mjerna jedinica"
+          options={["m²","kom","sat"]}
+          defaultValue={edit.unit||"m²"}
+        />
+
+        <Field
+          name="price"
+          label="Cijena"
+          type="number"
+          step="0.01"
+          defaultValue={edit.price||0}
+        />
+
+        <Field
+          name="category"
+          label="Kategorija"
+          defaultValue={edit.category||"Pranje"}
+        />
+      </FormCard>
+    }
+
+    <Table
+      columns={[
+        ["name","Naziv / usluga / artikal"],
+        ["unit","Mjerna jedinica"],
+        ["price","Cijena"],
+        ["category","Kategorija"]
+      ]}
+      rows={rows.map(x=>({...x,price:money(x.price)}))}
+      onRow={r=>{
+        setSelected(r);
+        setEdit(r);
+      }}
+    />
+
+    <div className="info-card">
+      <b>+ Dostava</b>
+      <span>
+        Trenutno podešeno: {money(db.settings.deliveryPrice)}.
+        Promjena je pod Administrator → Cjenovnik.
+      </span>
+    </div>
   </Module>
 }
-
 function Customers({db,commit}){
   const [edit,setEdit]=useState(null), [q,setQ]=useState("");
   const rows=db.customers.filter(x=>(x.name+" "+x.phone+" "+x.address).toLowerCase().includes(q.toLowerCase()));
