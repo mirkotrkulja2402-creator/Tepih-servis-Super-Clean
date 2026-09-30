@@ -999,22 +999,432 @@ function Customers({db,commit}){
 }
 
 function Orders({db,commit,nav}){
-  const [edit,setEdit]=useState(null), [q,setQ]=useState("");
-  const rows=db.orders.filter(x=>(String(x.no)+" "+x.customerName+" "+x.phone).toLowerCase().includes(q.toLowerCase()));
-  const saveOrder=(e)=>{e.preventDefault();const f=new FormData(e.currentTarget);const o={id:edit?.id||crypto.randomUUID(),no:edit?.no||nextNo(db.orders,"no"),customerId:f.get("customerId"),customerName:f.get("customerName"),address:f.get("address"),phone:f.get("phone"),note:f.get("note"),map:f.get("map"),carpets:Number(f.get("carpets")||0),date:f.get("date"),pickup:f.get("pickup"),status:"Otvorena"};commit({...db,orders:edit?.id?db.orders.map(x=>x.id===edit.id?o:x):[...db.orders,o]},"Narudžba sačuvana");setEdit(null)};
-  const start=(o)=>nav("racuni");
-  return <Module title="Narudžbe" subtitle="Narudžba → Mjerenje → Račun.">
-    <Toolbar onAdd={()=>setEdit({date:today()})} onSearch={()=>setQ(prompt("Pretraga narudžbi:")||"")} onRefresh={()=>setQ("")}/>
-    {edit!==null&&<FormCard title={`Narudžba ${edit.no?`N-${edit.no}`:"nova"}`} onCancel={()=>setEdit(null)} onSubmit={saveOrder} submit="Snimi narudžbu">
-      <Field name="customerName" label="Ime i prezime kupca" defaultValue={edit.customerName}/>
-      <Field name="customerId" label="ID postojećeg kupca (opcionalno)" defaultValue={edit.customerId}/>
-      <Field name="address" label="Adresa" defaultValue={edit.address}/><Field name="phone" label="Telefon" defaultValue={edit.phone}/>
-      <Field name="note" label="Napomena" defaultValue={edit.note}/><Field name="map" label="Google mapa / adresa" defaultValue={edit.map}/>
-      <Field name="carpets" label="Broj tepiha" type="number" defaultValue={edit.carpets||0}/><Field name="date" label="Datum" type="date" defaultValue={edit.date||today()}/>
-      <Field name="pickup" label="Način preuzimanja" defaultValue={edit.pickup}/>
-    </FormCard>}
-    <Table columns={[["no","Oznaka"],["customerName","Kupac"],["address","Adresa"],["phone","Telefon"],["carpets","Br. tepiha"],["date","Datum"],["status","Status"]]} rows={rows.map(x=>({...x,no:`N-${x.no}`}))} onRow={setEdit}/>
-    {rows.length>0&&<div className="flow-note"><Ruler/> Mjerenje se otvara iz odabrane narudžbe; podaci mjerenja se kasnije povlače u račun.</div>}
+  const [edit,setEdit]=useState(null);
+  const [selected,setSelected]=useState(null);
+  const [q,setQ]=useState("");
+  const [length,setLength]=useState("");
+  const [width,setWidth]=useState("");
+  const [unit,setUnit]=useState("m²");
+  const [quantity,setQuantity]=useState(1);
+  const [serviceId,setServiceId]=useState(db.priceList[0]?.id||"");
+  const [status,setStatus]=useState("Na pranju");
+
+  const rows=db.orders.filter(x=>
+    (
+      String(x.no)+" "+
+      String(x.customerName||"")+" "+
+      String(x.phone||"")+" "+
+      String(x.address||"")
+    ).toLowerCase().includes(q.toLowerCase())
+  );
+
+  const services=db.priceList;
+
+  const service=services.find(x=>String(x.id)===String(serviceId)) || services[0];
+
+  const realArea=Number(length||0)*Number(width||0);
+
+  const billableArea=
+    unit==="m²"
+      ? Math.max(realArea,1)
+      : Number(quantity||0);
+
+  const calculatedTotal=
+    Number(service?.price||0)*billableArea;
+
+  const openNew=()=>{
+    setSelected(null);
+    setLength("");
+    setWidth("");
+    setUnit("m²");
+    setQuantity(1);
+    setServiceId(services[0]?.id||"");
+    setStatus("Na pranju");
+    setEdit({date:today(),carpets:1});
+  };
+
+  const openExisting=(order)=>{
+    const measurement=db.measurements.find(x=>x.orderId===order.id);
+
+    setSelected(order);
+    setEdit(order);
+
+    setLength(measurement?.length||"");
+    setWidth(measurement?.width||"");
+    setUnit(measurement?.unit||"m²");
+    setQuantity(measurement?.quantity||1);
+    setServiceId(measurement?.serviceId||services[0]?.id||"");
+    setStatus(measurement?.status||order.status||"Na pranju");
+  };
+
+  const remove=()=>{
+    if(!selected)return;
+
+    const orderId=selected.id;
+
+    commit(
+      {
+        ...db,
+        orders:db.orders.filter(x=>x.id!==orderId),
+        measurements:db.measurements.filter(x=>x.orderId!==orderId)
+      },
+      "Narudžba uklonjena"
+    );
+
+    setSelected(null);
+    setEdit(null);
+  };
+
+  const saveOrder=(e)=>{
+    e.preventDefault();
+
+    const f=new FormData(e.currentTarget);
+
+    const no=edit?.no||nextNo(db.orders,"no");
+
+    const date=f.get("date")||today();
+
+    const day=new Date(`${date}T12:00:00`).getDate();
+
+    const carpets=Math.max(Number(f.get("carpets")||1),1);
+
+    const customerName=f.get("customerName")||"";
+
+    const order={
+      id:edit?.id||crypto.randomUUID(),
+      no,
+      customerId:f.get("customerId")||"",
+      customerName,
+      address:f.get("address")||"",
+      phone:f.get("phone")||"",
+      note:f.get("note")||"",
+      map:f.get("map")||"",
+      carpets,
+      date,
+      pickup:f.get("pickup")||"",
+      status
+    };
+
+    const measurementId=
+      db.measurements.find(x=>x.orderId===order.id)?.id ||
+      crypto.randomUUID();
+
+    const measurement={
+      id:measurementId,
+      orderId:order.id,
+      orderNo:no,
+      customerName,
+      carpetIndex:1,
+      carpets,
+      label:`${no}/${day}`,
+      carpetLabel:`1/${carpets}`,
+      length:Number(length||0),
+      width:Number(width||0),
+      area:Number(realArea.toFixed(2)),
+      billableArea:Number(billableArea.toFixed(2)),
+      unit,
+      quantity:Number(quantity||0),
+      serviceId:service?.id||"",
+      serviceName:service?.name||"",
+      unitPrice:Number(service?.price||0),
+      total:Number(calculatedTotal.toFixed(2)),
+      status
+    };
+
+    const orders=edit?.id
+      ? db.orders.map(x=>x.id===edit.id?order:x)
+      : [...db.orders,order];
+
+    const measurements=
+      db.measurements.some(x=>x.orderId===order.id)
+        ? db.measurements.map(x=>
+            x.orderId===order.id ? measurement : x
+          )
+        : [...db.measurements,measurement];
+
+    commit(
+      {...db,orders,measurements},
+      "Narudžba i mjerenje sačuvani"
+    );
+
+    setSelected(order);
+    setEdit(null);
+  };
+
+  return <Module
+    title="Narudžbe"
+    subtitle="Kupac → mjerenje → automatski obračun → račun."
+  >
+
+    <Toolbar
+      onAdd={openNew}
+      onDelete={remove}
+      onEdit={()=>selected&&openExisting(selected)}
+      onSearch={()=>setQ(prompt("Pretraga po broju, kupcu, telefonu ili adresi:")||"")}
+      onRefresh={()=>{
+        setQ("");
+        setSelected(null);
+        setEdit(null);
+      }}
+    />
+
+    {edit!==null&&
+      <FormCard
+        title={`Narudžba ${edit.no?`N-${edit.no}`:"nova"}`}
+        onCancel={()=>setEdit(null)}
+        onSubmit={saveOrder}
+        submit="Snimi narudžbu"
+      >
+
+        <Field
+          name="customerName"
+          label="Ime i prezime kupca"
+          defaultValue={edit.customerName}
+          list="order-customer-names"
+          required
+        />
+
+        <datalist id="order-customer-names">
+          {db.customers.map(x=>
+            <option key={x.id} value={x.name}>
+              {x.phone} — {x.address}
+            </option>
+          )}
+        </datalist>
+
+        <Field
+          name="customerId"
+          label="ID kupca"
+          defaultValue={edit.customerId}
+        />
+
+        <Field
+          name="phone"
+          label="Broj telefona"
+          defaultValue={edit.phone}
+          list="order-customer-phones"
+        />
+
+        <datalist id="order-customer-phones">
+          {db.customers.map(x=>
+            <option key={x.id} value={x.phone}>
+              {x.name} — {x.address}
+            </option>
+          )}
+        </datalist>
+
+        <Field
+          name="address"
+          label="Adresa"
+          defaultValue={edit.address}
+          list="order-customer-addresses"
+        />
+
+        <datalist id="order-customer-addresses">
+          {db.customers.map(x=>
+            <option key={x.id} value={x.address}>
+              {x.name} — {x.phone}
+            </option>
+          )}
+        </datalist>
+
+        <Field
+          name="date"
+          label="Datum"
+          type="date"
+          defaultValue={edit.date||today()}
+        />
+
+        <Field
+          name="carpets"
+          label="Ukupan broj tepiha"
+          type="number"
+          min="1"
+          defaultValue={edit.carpets||1}
+        />
+
+        <Field
+          name="pickup"
+          label="Način preuzimanja"
+          defaultValue={edit.pickup}
+        />
+
+        <Field
+          name="map"
+          label="Google mapa / lokacija"
+          defaultValue={edit.map}
+        />
+
+        <Field
+          name="note"
+          label="Napomena"
+          defaultValue={edit.note}
+        />
+
+        <div className="form-wide">
+          <h3>Mjerenje tepiha</h3>
+        </div>
+
+        <Field
+          label="Dužina (m)"
+          name="length"
+          type="number"
+          step="0.01"
+          min="0"
+          value={length}
+          onChange={e=>setLength(e.target.value)}
+        />
+
+        <Field
+          label="Širina (m)"
+          name="width"
+          type="number"
+          step="0.01"
+          min="0"
+          value={width}
+          onChange={e=>setWidth(e.target.value)}
+        />
+
+        <label className="field">
+          <span>Mjerna jedinica</span>
+          <select
+            value={unit}
+            onChange={e=>setUnit(e.target.value)}
+          >
+            <option value="m²">m²</option>
+            <option value="kom">kom</option>
+          </select>
+        </label>
+
+        {unit==="kom"&&
+          <Field
+            label="Količina"
+            name="quantity"
+            type="number"
+            min="1"
+            value={quantity}
+            onChange={e=>setQuantity(e.target.value)}
+          />
+        }
+
+        <label className="field">
+          <span>Usluga</span>
+          <select
+            value={serviceId}
+            onChange={e=>setServiceId(e.target.value)}
+          >
+            {services.map(x=>
+              <option key={x.id} value={x.id}>
+                {x.name} — {money(x.price)} / {x.unit}
+              </option>
+            )}
+          </select>
+        </label>
+
+        <label className="field">
+          <span>Status tepiha</span>
+          <select
+            value={status}
+            onChange={e=>setStatus(e.target.value)}
+          >
+            <option>Za krpljenje</option>
+            <option>Na pranju</option>
+            <option>U dostavi</option>
+            <option>Ponovo se pere</option>
+          </select>
+        </label>
+
+        <div className="info-card">
+          <b>Obračun mjerenja</b>
+
+          <span>
+            Stvarna površina:
+            {" "}
+            <strong>{realArea.toFixed(2)} m²</strong>
+          </span>
+
+          <span>
+            Naplatna površina:
+            {" "}
+            <strong>{billableArea.toFixed(2)} {unit}</strong>
+          </span>
+
+          <span>
+            Cijena:
+            {" "}
+            <strong>{money(calculatedTotal)}</strong>
+          </span>
+
+          {unit==="m²"&&realArea>0&&realArea<1&&
+            <span>
+              Minimalna obračunska površina je <strong>1,00 m²</strong>.
+            </span>
+          }
+        </div>
+
+        <div className="info-card">
+          <b>Oznaka tepiha</b>
+
+          <span>
+            Narudžba:
+            {" "}
+            <strong>
+              {edit.no||"nova"}/{edit.date
+                ? new Date(`${edit.date}T12:00:00`).getDate()
+                : new Date().getDate()}
+            </strong>
+          </span>
+
+          <span>
+            Tepih:
+            {" "}
+            <strong>
+              1/{Math.max(Number(edit.carpets||1),1)}
+            </strong>
+          </span>
+        </div>
+
+      </FormCard>
+    }
+
+    <Table
+      columns={[
+        ["no","Oznaka"],
+        ["customerName","Kupac"],
+        ["address","Adresa"],
+        ["phone","Telefon"],
+        ["carpets","Br. tepiha"],
+        ["date","Datum"],
+        ["status","Status"]
+      ]}
+      rows={rows.map(x=>({
+        ...x,
+        no:`N-${x.no}`
+      }))}
+      onRow={r=>{
+        const original=db.orders.find(x=>x.id===r.id);
+        if(original)openExisting(original);
+      }}
+    />
+
+    {selected&&
+      <div className="info-card">
+        <b>Veza narudžbe</b>
+
+        <span>
+          Mjerenje je povezano sa narudžbom i spremno za povlačenje u račun.
+        </span>
+
+        <button
+          type="button"
+          className="primary"
+          onClick={()=>nav("racuni")}
+        >
+          Otvori Račune
+        </button>
+      </div>
+    }
+
   </Module>
 }
 
