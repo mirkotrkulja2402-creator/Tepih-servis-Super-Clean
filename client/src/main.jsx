@@ -997,17 +997,10 @@ function Customers({db,commit}){
     />
   </Module>
 }
-
 function Orders({db,commit,nav}){
   const [edit,setEdit]=useState(null);
   const [selected,setSelected]=useState(null);
   const [q,setQ]=useState("");
-  const [length,setLength]=useState("");
-  const [width,setWidth]=useState("");
-  const [unit,setUnit]=useState("m²");
-  const [quantity,setQuantity]=useState(1);
-  const [serviceId,setServiceId]=useState(db.priceList[0]?.id||"");
-  const [status,setStatus]=useState("Na pranju");
 
   const rows=db.orders.filter(x=>
     (
@@ -1018,55 +1011,43 @@ function Orders({db,commit,nav}){
     ).toLowerCase().includes(q.toLowerCase())
   );
 
-  const services=db.priceList;
+  const saveOrder=(e)=>{
+    e.preventDefault();
 
-  const service=services.find(x=>String(x.id)===String(serviceId)) || services[0];
+    const f=new FormData(e.currentTarget);
 
-  const realArea=Number(length||0)*Number(width||0);
+    const order={
+      id:edit?.id||crypto.randomUUID(),
+      no:edit?.no||nextNo(db.orders,"no"),
+      customerId:f.get("customerId")||"",
+      customerName:f.get("customerName")||"",
+      address:f.get("address")||"",
+      phone:f.get("phone")||"",
+      note:f.get("note")||"",
+      map:f.get("map")||"",
+      carpets:Math.max(Number(f.get("carpets")||1),1),
+      date:f.get("date")||today(),
+      pickup:f.get("pickup")||"",
+      status:"Narudžba"
+    };
 
-  const billableArea=
-    unit==="m²"
-      ? Math.max(realArea,1)
-      : Number(quantity||0);
+    const orders=edit?.id
+      ? db.orders.map(x=>x.id===edit.id?order:x)
+      : [...db.orders,order];
 
-  const calculatedTotal=
-    Number(service?.price||0)*billableArea;
-
-  const openNew=()=>{
-    setSelected(null);
-    setLength("");
-    setWidth("");
-    setUnit("m²");
-    setQuantity(1);
-    setServiceId(services[0]?.id||"");
-    setStatus("Na pranju");
-    setEdit({date:today(),carpets:1});
-  };
-
-  const openExisting=(order)=>{
-    const measurement=db.measurements.find(x=>x.orderId===order.id);
+    commit({...db,orders},"Narudžba sačuvana");
 
     setSelected(order);
-    setEdit(order);
-
-    setLength(measurement?.length||"");
-    setWidth(measurement?.width||"");
-    setUnit(measurement?.unit||"m²");
-    setQuantity(measurement?.quantity||1);
-    setServiceId(measurement?.serviceId||services[0]?.id||"");
-    setStatus(measurement?.status||order.status||"Na pranju");
+    setEdit(null);
   };
 
   const remove=()=>{
     if(!selected)return;
 
-    const orderId=selected.id;
-
     commit(
       {
         ...db,
-        orders:db.orders.filter(x=>x.id!==orderId),
-        measurements:db.measurements.filter(x=>x.orderId!==orderId)
+        orders:db.orders.filter(x=>x.id!==selected.id)
       },
       "Narudžba uklonjena"
     );
@@ -1075,92 +1056,22 @@ function Orders({db,commit,nav}){
     setEdit(null);
   };
 
-  const saveOrder=(e)=>{
-    e.preventDefault();
-
-    const f=new FormData(e.currentTarget);
-
-    const no=edit?.no||nextNo(db.orders,"no");
-
-    const date=f.get("date")||today();
-
-    const day=new Date(`${date}T12:00:00`).getDate();
-
-    const carpets=Math.max(Number(f.get("carpets")||1),1);
-
-    const customerName=f.get("customerName")||"";
-
-    const order={
-      id:edit?.id||crypto.randomUUID(),
-      no,
-      customerId:f.get("customerId")||"",
-      customerName,
-      address:f.get("address")||"",
-      phone:f.get("phone")||"",
-      note:f.get("note")||"",
-      map:f.get("map")||"",
-      carpets,
-      date,
-      pickup:f.get("pickup")||"",
-      status
-    };
-
-    const measurementId=
-      db.measurements.find(x=>x.orderId===order.id)?.id ||
-      crypto.randomUUID();
-
-    const measurement={
-      id:measurementId,
-      orderId:order.id,
-      orderNo:no,
-      customerName,
-      carpetIndex:1,
-      carpets,
-      label:`${no}/${day}`,
-      carpetLabel:`1/${carpets}`,
-      length:Number(length||0),
-      width:Number(width||0),
-      area:Number(realArea.toFixed(2)),
-      billableArea:Number(billableArea.toFixed(2)),
-      unit,
-      quantity:Number(quantity||0),
-      serviceId:service?.id||"",
-      serviceName:service?.name||"",
-      unitPrice:Number(service?.price||0),
-      total:Number(calculatedTotal.toFixed(2)),
-      status
-    };
-
-    const orders=edit?.id
-      ? db.orders.map(x=>x.id===edit.id?order:x)
-      : [...db.orders,order];
-
-    const measurements=
-      db.measurements.some(x=>x.orderId===order.id)
-        ? db.measurements.map(x=>
-            x.orderId===order.id ? measurement : x
-          )
-        : [...db.measurements,measurement];
-
-    commit(
-      {...db,orders,measurements},
-      "Narudžba i mjerenje sačuvani"
-    );
-
-    setSelected(order);
-    setEdit(null);
-  };
-
   return <Module
     title="Narudžbe"
-    subtitle="Kupac → mjerenje → automatski obračun → račun."
+    subtitle="Prvo se evidentira narudžba. Mjerenje se radi u posebnom koraku."
   >
 
     <Toolbar
-      onAdd={openNew}
+      onAdd={()=>setEdit({date:today(),carpets:1})}
       onDelete={remove}
-      onEdit={()=>selected&&openExisting(selected)}
-      onSearch={()=>setQ(prompt("Pretraga po broju, kupcu, telefonu ili adresi:")||"")}
+      onEdit={()=>selected&&setEdit(selected)}
+      onSearch={()=>
+        setQ(
+          prompt(
+            "Pretraga po broju, kupcu, telefonu ili adresi:"
+          )||""
+        )
+      }
       onRefresh={()=>{
         setQ("");
         setSelected(null);
@@ -1170,7 +1081,11 @@ function Orders({db,commit,nav}){
 
     {edit!==null&&
       <FormCard
-        title={`Narudžba ${edit.no?`N-${edit.no}`:"nova"}`}
+        title={
+          edit.no
+            ? `Narudžba N-${edit.no}`
+            : "Nova narudžba"
+        }
         onCancel={()=>setEdit(null)}
         onSubmit={saveOrder}
         submit="Snimi narudžbu"
@@ -1261,129 +1176,6 @@ function Orders({db,commit,nav}){
           defaultValue={edit.note}
         />
 
-        <div className="form-wide">
-          <h3>Mjerenje tepiha</h3>
-        </div>
-
-        <Field
-          label="Dužina (m)"
-          name="length"
-          type="number"
-          step="0.01"
-          min="0"
-          value={length}
-          onChange={e=>setLength(e.target.value)}
-        />
-
-        <Field
-          label="Širina (m)"
-          name="width"
-          type="number"
-          step="0.01"
-          min="0"
-          value={width}
-          onChange={e=>setWidth(e.target.value)}
-        />
-
-        <label className="field">
-          <span>Mjerna jedinica</span>
-          <select
-            value={unit}
-            onChange={e=>setUnit(e.target.value)}
-          >
-            <option value="m²">m²</option>
-            <option value="kom">kom</option>
-          </select>
-        </label>
-
-        {unit==="kom"&&
-          <Field
-            label="Količina"
-            name="quantity"
-            type="number"
-            min="1"
-            value={quantity}
-            onChange={e=>setQuantity(e.target.value)}
-          />
-        }
-
-        <label className="field">
-          <span>Usluga</span>
-          <select
-            value={serviceId}
-            onChange={e=>setServiceId(e.target.value)}
-          >
-            {services.map(x=>
-              <option key={x.id} value={x.id}>
-                {x.name} — {money(x.price)} / {x.unit}
-              </option>
-            )}
-          </select>
-        </label>
-
-        <label className="field">
-          <span>Status tepiha</span>
-          <select
-            value={status}
-            onChange={e=>setStatus(e.target.value)}
-          >
-            <option>Za krpljenje</option>
-            <option>Na pranju</option>
-            <option>U dostavi</option>
-            <option>Ponovo se pere</option>
-          </select>
-        </label>
-
-        <div className="info-card">
-          <b>Obračun mjerenja</b>
-
-          <span>
-            Stvarna površina:
-            {" "}
-            <strong>{realArea.toFixed(2)} m²</strong>
-          </span>
-
-          <span>
-            Naplatna površina:
-            {" "}
-            <strong>{billableArea.toFixed(2)} {unit}</strong>
-          </span>
-
-          <span>
-            Cijena:
-            {" "}
-            <strong>{money(calculatedTotal)}</strong>
-          </span>
-
-          {unit==="m²"&&realArea>0&&realArea<1&&
-            <span>
-              Minimalna obračunska površina je <strong>1,00 m²</strong>.
-            </span>
-          }
-        </div>
-
-        <div className="info-card">
-          <b>Oznaka tepiha</b>
-
-          <span>
-            Narudžba:
-            {" "}
-            <strong>
-              {edit.no||"nova"}/{edit.date
-                ? new Date(`${edit.date}T12:00:00`).getDate()
-                : new Date().getDate()}
-            </strong>
-          </span>
-
-          <span>
-            Tepih:
-            {" "}
-            <strong>
-              1/{Math.max(Number(edit.carpets||1),1)}
-            </strong>
-          </span>
-        </div>
-
       </FormCard>
     }
 
@@ -1394,8 +1186,7 @@ function Orders({db,commit,nav}){
         ["address","Adresa"],
         ["phone","Telefon"],
         ["carpets","Br. tepiha"],
-        ["date","Datum"],
-        ["status","Status"]
+        ["date","Datum"]
       ]}
       rows={rows.map(x=>({
         ...x,
@@ -1403,16 +1194,498 @@ function Orders({db,commit,nav}){
       }))}
       onRow={r=>{
         const original=db.orders.find(x=>x.id===r.id);
-        if(original)openExisting(original);
+
+        if(original){
+          setSelected(original);
+          setEdit(original);
+        }
       }}
     />
 
     {selected&&
       <div className="info-card">
-        <b>Veza narudžbe</b>
+
+        <b>Sljedeći korak: Mjerenje</b>
 
         <span>
-          Mjerenje je povezano sa narudžbom i spremno za povlačenje u račun.
+          Narudžba je sačuvana.
+          Sada se posebno unose dimenzije,
+          m², usluga, cijena i status tepiha.
+        </span>
+
+        <button
+          type="button"
+          className="primary"
+          onClick={()=>nav("mjerenje")}
+        >
+          Otvori Mjerenje
+        </button>
+
+      </div>
+    }
+
+  </Module>
+}
+
+
+function Measurements({db,commit,nav}){
+
+  const [selected,setSelected]=useState(null);
+  const [edit,setEdit]=useState(null);
+
+  const [length,setLength]=useState("");
+  const [width,setWidth]=useState("");
+  const [unit,setUnit]=useState("m²");
+  const [quantity,setQuantity]=useState(1);
+
+  const [serviceId,setServiceId]=useState(
+    db.priceList[0]?.id||""
+  );
+
+  const [status,setStatus]=useState("Na pranju");
+
+  const order=selected;
+
+  const service=
+    db.priceList.find(
+      x=>String(x.id)===String(serviceId)
+    )||db.priceList[0];
+
+  const realArea=
+    Number(length||0)*Number(width||0);
+
+  const billableArea=
+    unit==="m²"
+      ? Math.max(realArea,1)
+      : Number(quantity||0);
+
+  const total=
+    Number(service?.price||0)*billableArea;
+
+
+  const start=(o)=>{
+
+    if(!o)return;
+
+    const m=
+      db.measurements.find(
+        x=>x.orderId===o.id
+      );
+
+    setSelected(o);
+    setEdit(m||{});
+
+    setLength(m?.length??"");
+    setWidth(m?.width??"");
+    setUnit(m?.unit||"m²");
+    setQuantity(m?.quantity||1);
+
+    setServiceId(
+      m?.serviceId||
+      db.priceList[0]?.id||
+      ""
+    );
+
+    setStatus(
+      m?.status||
+      "Na pranju"
+    );
+  };
+
+
+  const saveMeasurement=(e)=>{
+
+    e.preventDefault();
+
+    if(!order)return;
+
+    const day=
+      new Date(
+        `${order.date||today()}T12:00:00`
+      ).getDate();
+
+    const measurement={
+
+      id:
+        edit?.id||
+        crypto.randomUUID(),
+
+      orderId:
+        order.id,
+
+      orderNo:
+        order.no,
+
+      customerName:
+        order.customerName,
+
+      carpetIndex:1,
+
+      carpets:
+        order.carpets||1,
+
+      label:
+        `${order.no}/${day}`,
+
+      carpetLabel:
+        `1/${Math.max(
+          Number(order.carpets||1),
+          1
+        )}`,
+
+      length:
+        Number(length||0),
+
+      width:
+        Number(width||0),
+
+      area:
+        Number(realArea.toFixed(2)),
+
+      billableArea:
+        Number(billableArea.toFixed(2)),
+
+      unit,
+
+      quantity:
+        Number(quantity||0),
+
+      serviceId:
+        service?.id||"",
+
+      serviceName:
+        service?.name||"",
+
+      unitPrice:
+        Number(service?.price||0),
+
+      total:
+        Number(total.toFixed(2)),
+
+      status
+    };
+
+    const measurements=
+      db.measurements.some(
+        x=>x.id===measurement.id
+      )
+      ? db.measurements.map(
+          x=>
+            x.id===measurement.id
+              ? measurement
+              : x
+        )
+      : [
+          ...db.measurements,
+          measurement
+        ];
+
+    commit(
+      {...db,measurements},
+      "Mjerenje sačuvano"
+    );
+
+    setEdit(null);
+  };
+
+
+  const rows=
+    db.orders.map(o=>{
+
+      const m=
+        db.measurements.find(
+          x=>x.orderId===o.id
+        );
+
+      return {
+        ...o,
+        measurement:
+          m
+            ? `${m.billableArea.toFixed(2)} ${m.unit} • ${money(m.total)}`
+            : "Nije izmjereno"
+      };
+
+    });
+
+
+  return <Module
+    title="Mjerenje"
+    subtitle="Mjerenje dolazi nakon narudžbe i prije računa."
+  >
+
+    <Toolbar
+      onAdd={()=>{
+        if(db.orders.length)
+          start(db.orders[0]);
+      }}
+      onEdit={()=>{
+        if(selected)
+          start(selected);
+      }}
+      onSearch={()=>{}}
+      onRefresh={()=>{
+        setSelected(null);
+        setEdit(null);
+      }}
+    />
+
+
+    <Table
+      columns={[
+        ["no","Narudžba"],
+        ["customerName","Kupac"],
+        ["carpets","Br. tepiha"],
+        ["measurement","Mjerenje"]
+      ]}
+      rows={rows}
+      onRow={r=>
+        start(
+          db.orders.find(
+            x=>x.id===r.id
+          )
+        )
+      }
+    />
+
+
+    {edit!==null&&order&&
+      <FormCard
+        title={`Mjerenje — N-${order.no}`}
+        onCancel={()=>setEdit(null)}
+        onSubmit={saveMeasurement}
+        submit="Snimi mjerenje"
+      >
+
+        <div className="info-card form-wide">
+
+          <b>
+            {order.customerName}
+          </b>
+
+          <span>
+            {order.address} • {order.phone}
+          </span>
+
+          <span>
+            Oznaka:
+            {" "}
+            <strong>
+              {order.no}/
+              {new Date(
+                `${order.date||today()}T12:00:00`
+              ).getDate()}
+            </strong>
+
+            {" • "}
+
+            Tepih:
+            {" "}
+
+            <strong>
+              1/{order.carpets||1}
+            </strong>
+          </span>
+
+        </div>
+
+
+        <Field
+          label="Dužina (m)"
+          name="length"
+          type="number"
+          step="0.01"
+          min="0"
+          value={length}
+          onChange={
+            e=>setLength(e.target.value)
+          }
+        />
+
+
+        <Field
+          label="Širina (m)"
+          name="width"
+          type="number"
+          step="0.01"
+          min="0"
+          value={width}
+          onChange={
+            e=>setWidth(e.target.value)
+          }
+        />
+
+
+        <label className="field">
+
+          <span>
+            Mjerna jedinica
+          </span>
+
+          <select
+            value={unit}
+            onChange={
+              e=>setUnit(e.target.value)
+            }
+          >
+            <option value="m²">
+              m²
+            </option>
+
+            <option value="kom">
+              kom
+            </option>
+
+          </select>
+
+        </label>
+
+
+        {unit==="kom"&&
+
+          <Field
+            label="Količina"
+            name="quantity"
+            type="number"
+            min="1"
+            value={quantity}
+            onChange={
+              e=>setQuantity(e.target.value)
+            }
+          />
+
+        }
+
+
+        <label className="field">
+
+          <span>
+            Usluga
+          </span>
+
+          <select
+            value={serviceId}
+            onChange={
+              e=>setServiceId(e.target.value)
+            }
+          >
+
+            {db.priceList.map(x=>
+
+              <option
+                key={x.id}
+                value={x.id}
+              >
+                {x.name} —
+                {" "}
+                {money(x.price)}
+                {" / "}
+                {x.unit}
+              </option>
+
+            )}
+
+          </select>
+
+        </label>
+
+
+        <label className="field">
+
+          <span>
+            Status tepiha
+          </span>
+
+          <select
+            value={status}
+            onChange={
+              e=>setStatus(e.target.value)
+            }
+          >
+
+            <option>
+              Za krpljenje
+            </option>
+
+            <option>
+              Na pranju
+            </option>
+
+            <option>
+              U dostavi
+            </option>
+
+            <option>
+              Ponovo se pere
+            </option>
+
+          </select>
+
+        </label>
+
+
+        <div className="info-card form-wide">
+
+          <b>
+            Obračun
+          </b>
+
+          <span>
+            Stvarna površina:
+            {" "}
+            <strong>
+              {realArea.toFixed(2)} m²
+            </strong>
+          </span>
+
+          <span>
+            Naplatna površina:
+            {" "}
+            <strong>
+              {billableArea.toFixed(2)} {unit}
+            </strong>
+          </span>
+
+          <span>
+            Cijena:
+            {" "}
+            <strong>
+              {money(total)}
+            </strong>
+          </span>
+
+          {unit==="m²"&&
+            realArea>0&&
+            realArea<1&&
+
+            <span>
+              Minimalni obračun je
+              {" "}
+              <strong>
+                1,00 m²
+              </strong>.
+            </span>
+          }
+
+        </div>
+
+      </FormCard>
+    }
+
+
+    {selected&&
+      db.measurements.some(
+        x=>x.orderId===selected.id
+      )&&
+
+      <div className="info-card">
+
+        <b>
+          Sljedeći korak: Račun
+        </b>
+
+        <span>
+          Mjerenje je završeno i povezano
+          sa narudžbom.
         </span>
 
         <button
@@ -1422,6 +1695,7 @@ function Orders({db,commit,nav}){
         >
           Otvori Račune
         </button>
+
       </div>
     }
 
