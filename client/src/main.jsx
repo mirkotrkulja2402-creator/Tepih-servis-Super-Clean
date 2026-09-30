@@ -775,17 +775,226 @@ function PriceList({db,commit}){
   </Module>
 }
 function Customers({db,commit}){
-  const [edit,setEdit]=useState(null), [q,setQ]=useState("");
-  const rows=db.customers.filter(x=>(x.name+" "+x.phone+" "+x.address).toLowerCase().includes(q.toLowerCase()));
-  const saveCustomer=(e)=>{e.preventDefault();const f=new FormData(e.currentTarget);const c={id:edit?.id||crypto.randomUUID(),name:f.get("name"),address:f.get("address"),phone:f.get("phone"),city:f.get("city"),map:f.get("map"),note:f.get("note")};commit({...db,customers:edit?.id?db.customers.map(x=>x.id===edit.id?c:x):[...db.customers,c]},"Kupac sačuvan");setEdit(null)};
-  return <Module title="Kupci" subtitle="Jedan kupac po redu, brzo uređivanje i Google mapa.">
-    <Toolbar onAdd={()=>setEdit({})} onSearch={()=>setQ(prompt("Pretraga kupaca:")||"")} onRefresh={()=>setQ("")}/>
-    {edit!==null&&<FormCard title={edit.id?"Izmijeni kupca":"Novi kupac"} onCancel={()=>setEdit(null)} onSubmit={saveCustomer}>
-      <Field name="name" label="Ime i prezime" defaultValue={edit.name}/><Field name="address" label="Adresa" defaultValue={edit.address}/>
-      <Field name="phone" label="Broj telefona" defaultValue={edit.phone}/><SelectField name="city" label="Grad" options={cities} defaultValue={edit.city||"Banja Luka"}/>
-      <Field name="map" label="Google mapa / adresa za mapu" defaultValue={edit.map}/><Field name="note" label="Napomena" defaultValue={edit.note}/>
-    </FormCard>}
-    <Table columns={[["name","Ime i prezime"],["address","Adresa"],["phone","Telefon"],["city","Grad"],["map","Lokacija"],["note","Napomena"]]} rows={rows.map(x=>({...x,map:x.map?<a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(x.map)}`} target="_blank" onClick={e=>e.stopPropagation()}>Mapa</a>:"—"}))} onRow={setEdit}/>
+  const [edit,setEdit]=useState(null);
+  const [selected,setSelected]=useState(null);
+  const [q,setQ]=useState("");
+
+  const rows=db.customers.filter(x=>
+    (x.name+" "+x.phone+" "+x.address+" "+x.city)
+      .toLowerCase()
+      .includes(q.toLowerCase())
+  );
+
+  const remove=()=>{
+    if(!selected)return;
+    commit(
+      {...db,customers:db.customers.filter(x=>x.id!==selected.id)},
+      "Kupac uklonjen"
+    );
+    setSelected(null);
+    setEdit(null);
+  };
+
+  const saveCustomer=(e)=>{
+    e.preventDefault();
+    const f=new FormData(e.currentTarget);
+
+    const customer={
+      id:edit?.id||crypto.randomUUID(),
+      name:f.get("name")||"",
+      address:f.get("address")||"",
+      phone:f.get("phone")||"",
+      city:f.get("city")||"Banja Luka",
+      neighborhood:f.get("neighborhood")||"",
+      map:f.get("map")||"",
+      note:f.get("note")||""
+    };
+
+    commit(
+      {
+        ...db,
+        customers:edit?.id
+          ? db.customers.map(x=>x.id===edit.id?customer:x)
+          : [...db.customers,customer]
+      },
+      "Kupac sačuvan"
+    );
+
+    setSelected(customer);
+    setEdit(null);
+  };
+
+  const exportCustomers=()=>{
+    const header=[
+      "Ime i prezime",
+      "Adresa",
+      "Telefon",
+      "Grad",
+      "Naselje",
+      "Google mapa",
+      "Napomena"
+    ];
+
+    const csv=[
+      header,
+      ...db.customers.map(x=>[
+        x.name,x.address,x.phone,x.city,
+        x.neighborhood,x.map,x.note
+      ])
+    ]
+      .map(row=>row.map(v=>`"${String(v??"").replaceAll('"','""')}"`).join(";"))
+      .join("\n");
+
+    const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;
+    a.download="Super-Clean-Kupci.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const importCustomers=(e)=>{
+    const file=e.target.files?.[0];
+    if(!file)return;
+
+    const reader=new FileReader();
+
+    reader.onload=()=>{
+      const lines=String(reader.result||"")
+        .split(/\r?\n/)
+        .filter(Boolean);
+
+      if(lines.length<2)return;
+
+      const imported=lines.slice(1).map(line=>{
+        const values=line
+          .split(";")
+          .map(v=>v.replace(/^"|"$/g,"").replaceAll('""','"'));
+
+        return {
+          id:crypto.randomUUID(),
+          name:values[0]||"",
+          address:values[1]||"",
+          phone:values[2]||"",
+          city:values[3]||"Banja Luka",
+          neighborhood:values[4]||"",
+          map:values[5]||"",
+          note:values[6]||""
+        };
+      }).filter(x=>x.name||x.phone||x.address);
+
+      commit(
+        {...db,customers:[...db.customers,...imported]},
+        `${imported.length} kupaca uvezeno`
+      );
+    };
+
+    reader.readAsText(file,"UTF-8");
+    e.target.value="";
+  };
+
+  return <Module
+    title="Kupci"
+    subtitle="Jedinstvena evidencija kupaca sa brzom pretragom i lokacijom."
+  >
+    <Toolbar
+      onAdd={()=>{setSelected(null);setEdit({city:"Banja Luka"})}}
+      onDelete={remove}
+      onEdit={()=>selected&&setEdit(selected)}
+      onSearch={()=>setQ(prompt("Pretraga po imenu, telefonu, adresi ili gradu:")||"")}
+      onRefresh={()=>{setQ("");setSelected(null);setEdit(null)}}
+      onExport={exportCustomers}
+      onImport={()=>document.getElementById("customer-import").click()}
+    />
+
+    <input
+      id="customer-import"
+      type="file"
+      accept=".csv,.xls,.xlsx"
+      style={{display:"none"}}
+      onChange={importCustomers}
+    />
+
+    {edit!==null&&
+      <FormCard
+        title={edit.id?"Izmijeni kupca":"Novi kupac"}
+        onCancel={()=>setEdit(null)}
+        onSubmit={saveCustomer}
+      >
+        <Field
+          name="name"
+          label="Ime i prezime"
+          defaultValue={edit.name}
+          required
+        />
+
+        <Field
+          name="phone"
+          label="Broj telefona"
+          defaultValue={edit.phone}
+        />
+
+        <Field
+          name="address"
+          label="Adresa"
+          defaultValue={edit.address}
+        />
+
+        <SelectField
+          name="city"
+          label="Grad"
+          options={cities}
+          defaultValue={edit.city||"Banja Luka"}
+        />
+
+        <Field
+          name="neighborhood"
+          label="Naselje"
+          defaultValue={edit.neighborhood}
+        />
+
+        <Field
+          name="map"
+          label="Google mapa / lokacija"
+          defaultValue={edit.map}
+        />
+
+        <Field
+          name="note"
+          label="Napomena"
+          defaultValue={edit.note}
+        />
+      </FormCard>
+    }
+
+    <Table
+      columns={[
+        ["name","Ime i prezime"],
+        ["phone","Telefon"],
+        ["address","Adresa"],
+        ["city","Grad"],
+        ["neighborhood","Naselje"],
+        ["map","Lokacija"],
+        ["note","Napomena"]
+      ]}
+      rows={rows.map(x=>({
+        ...x,
+        map:x.map
+          ? <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(x.map)}`}
+              target="_blank"
+              onClick={e=>e.stopPropagation()}
+            >
+              Mapa
+            </a>
+          : "—"
+      }))}
+      onRow={r=>{
+        setSelected(r);
+        setEdit(r);
+      }}
+    />
   </Module>
 }
 
