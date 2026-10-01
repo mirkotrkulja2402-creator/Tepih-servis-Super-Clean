@@ -1493,6 +1493,81 @@ function Measurements({db,commit,nav}){
         String(o.customerName||"").toLowerCase().includes(q.toLowerCase()) ||
         String(o.phone||"").toLowerCase().includes(q.toLowerCase())
       );
+<Toolbar
+  onAdd={()=>{
+    if(!db.orders.length){
+      alert("Prvo unesite narudžbu.");
+      return;
+    }
+
+    const q=prompt(
+      "Unesite broj narudžbe ili ime kupca:"
+    );
+
+    if(!q || !q.trim()) return;
+
+    const text=q.trim().toLowerCase();
+
+    const found=db.orders.find(o=>
+      String(o.no||"").toLowerCase()===text ||
+      String(o.customerName||"").toLowerCase().includes(text)
+    );
+
+    if(!found){
+      alert("Narudžba nije pronađena.");
+      return;
+    }
+
+    start(found);
+  }}
+
+  onDelete={()=>{
+    if(!selected){
+      alert("Prvo označite narudžbu.");
+      return;
+    }
+
+    if(!db.measurements.some(m=>m.orderId===selected.id)){
+      alert("Za ovu narudžbu nema mjerenja.");
+      return;
+    }
+
+    if(!confirm("Obrisati mjerenje za ovu narudžbu?")) return;
+
+    commit(
+      {
+        ...db,
+        measurements:db.measurements.filter(
+          m=>m.orderId!==selected.id
+        )
+      },
+      "Mjerenje obrisano"
+    );
+
+    setSelected(null);
+    setEdit(null);
+  }}
+
+  onEdit={()=>{
+    if(selected){
+      start(selected);
+    }else{
+      alert("Prvo označite narudžbu.");
+    }
+  }}
+
+  onSearch={()=>{
+    const q=prompt(
+      "Pretraga narudžbe ili kupca:"
+    )||"";
+
+    if(!q.trim()) return;
+
+    const found=db.orders.find(o=>
+      String(o.no||"").toLowerCase().includes(q.toLowerCase()) ||
+      String(o.customerName||"").toLowerCase().includes(q.toLowerCase()) ||
+      String(o.phone||"").toLowerCase().includes(q.toLowerCase())
+    );
 
     if(found){
       setSelected(found);
