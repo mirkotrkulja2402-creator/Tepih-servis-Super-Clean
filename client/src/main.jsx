@@ -91,6 +91,7 @@ function App(){
       {page==="cjenovnik" && <PriceList db={db} commit={commit} open={setModal}/>}
       {page==="kupci" && <Customers db={db} commit={commit}/>}
       {page==="narudzbe" && <Orders db={db} commit={commit} nav={nav}/>}
+      {page==="mjerenje" && <Measurements db={db} commit={commit} nav={nav}/>}
       {page==="racuni" && <Invoices db={db} commit={commit}/>}
       {page==="blagajna" && <CashDesk db={db} commit={commit}/>}
       {page==="izvjestaji" && <Reports db={db}/>}
