@@ -25,7 +25,7 @@ const cities = [
 ];
 
 const actionDefs = [
-  ["Dodaj",Plus],
+  ["Dodaj",Plus], sad
   ["Ukloni",Trash2],
   ["Izmijeni",Pencil],
   ["Pretraga",Search],
@@ -1407,12 +1407,13 @@ function Measurements({db,commit,nav}){
       };
 
     });
-
-
   return <Module
-    title="Mjerenje"
-    subtitle="Mjerenje dolazi nakon narudžbe i prije računa."
-  >
+  title="Mjerenje"
+  subtitle="Mjerenje dolazi nakon narudžbe i prije računa."
+>
+
+<Toolbar
+  onAdd={()=>{
 
     onAdd={()=>{
   if(!db.orders.length){
