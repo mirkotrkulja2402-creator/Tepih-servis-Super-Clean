@@ -11,7 +11,7 @@ import "./styles.css";
 
 const MODULES = [
   ["home","Početna",Home],["kupci","Kupci",Users],["cjenovnik","Cjenovnik",Tags],
-  ["narudzbe","Narudžbe",ClipboardList],["racuni","Računi",FileText],
+  ["narudzbe","Narudžbe",ClipboardList],["mjerenje","Mjerenje",Ruler],["racuni","Računi",FileText],
   ["blagajna","Blagajna",Wallet],["izvjestaji","Izvještaji",BarChart3],
   ["ruta","Ruta",Route],["gari","GARI",Ruler],["qr","QR KOD",QrCode],
   ["administrator","Administrator",Settings]
