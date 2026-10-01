@@ -1414,8 +1414,6 @@ function Measurements({db,commit,nav}){
 
 <Toolbar
   onAdd={()=>{
-
-    onAdd={()=>{
   if(!db.orders.length){
     alert("Prvo unesite narudžbu.");
     return;
