@@ -1414,24 +1414,32 @@ function Measurements({db,commit,nav}){
     subtitle="Mjerenje dolazi nakon narudžbe i prije računa."
   >
 
-    <Toolbar
-  onAdd={()=>{
-    if(!db.orders.length){
-      alert("Prvo unesite narudžbu.");
-      return;
-    }
+    onAdd={()=>{
+  if(!db.orders.length){
+    alert("Prvo unesite narudžbu.");
+    return;
+  }
 
-    const nextOrder =
-      selected ||
-      db.orders.find(
-        o=>!db.measurements.some(
-          m=>m.orderId===o.id
-        )
-      ) ||
-      db.orders[0];
+  const q=prompt(
+    "Unesite broj narudžbe ili ime kupca:"
+  );
 
-    start(nextOrder);
-  }}
+  if(!q || !q.trim()) return;
+
+  const text=q.trim().toLowerCase();
+
+  const found=db.orders.find(o=>
+    String(o.no||"").toLowerCase()===text ||
+    String(o.customerName||"").toLowerCase().includes(text)
+  );
+
+  if(!found){
+    alert("Narudžba nije pronađena.");
+    return;
+  }
+
+  start(found);
+}}
 
   onDelete={()=>{
     if(!selected)return;
