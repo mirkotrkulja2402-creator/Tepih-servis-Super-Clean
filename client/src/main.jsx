@@ -1415,20 +1415,106 @@ function Measurements({db,commit,nav}){
   >
 
     <Toolbar
-      onAdd={()=>{
-        if(db.orders.length)
-          start(db.orders[0]);
-      }}
-      onEdit={()=>{
-        if(selected)
-          start(selected);
-      }}
-      onSearch={()=>{}}
-      onRefresh={()=>{
-        setSelected(null);
-        setEdit(null);
-      }}
-    />
+  onAdd={()=>{
+    if(!db.orders.length){
+      alert("Prvo unesite narudžbu.");
+      return;
+    }
+
+    const nextOrder =
+      selected ||
+      db.orders.find(
+        o=>!db.measurements.some(
+          m=>m.orderId===o.id
+        )
+      ) ||
+      db.orders[0];
+
+    start(nextOrder);
+  }}
+
+  onDelete={()=>{
+    if(!selected)return;
+
+    const exists=
+      db.measurements.some(
+        m=>m.orderId===selected.id
+      );
+
+    if(!exists){
+      alert("Za ovu narudžbu nema mjerenja.");
+      return;
+    }
+
+    if(!confirm("Obrisati mjerenje za ovu narudžbu?"))
+      return;
+
+    commit(
+      {
+        ...db,
+        measurements:
+          db.measurements.filter(
+            m=>m.orderId!==selected.id
+          )
+      },
+      "Mjerenje obrisano"
+    );
+
+    setSelected(null);
+    setEdit(null);
+  }}
+
+  onEdit={()=>{
+    if(selected){
+      start(selected);
+    }else{
+      alert("Prvo označite narudžbu.");
+    }
+  }}
+
+  onSearch={()=>{
+    const q=
+      prompt("Pretraga narudžbe ili kupca:")||
+      "";
+
+    if(!q.trim())return;
+
+    const found=
+      db.orders.find(o=>
+        String(o.no||"").toLowerCase().includes(q.toLowerCase()) ||
+        String(o.customerName||"").toLowerCase().includes(q.toLowerCase()) ||
+        String(o.phone||"").toLowerCase().includes(q.toLowerCase())
+      );
+
+    if(found){
+      setSelected(found);
+      start(found);
+    }else{
+      alert("Narudžba nije pronađena.");
+    }
+  }}
+
+  onRefresh={()=>{
+    setSelected(null);
+    setEdit(null);
+  }}
+
+  onPdf={()=>{
+    alert("PDF mjerenja će biti povezan sa štampom računa.");
+  }}
+
+  onPrint={()=>{
+    window.print();
+  }}
+
+  onExport={()=>{
+    alert("Izvoz mjerenja biće dodat zajedno sa Excel izvozom.");
+  }}
+
+  onImport={()=>{
+    alert("Uvoz mjerenja biće dodat zajedno sa Excel uvozom.");
+  }}
+/>
 
 
     <Table
