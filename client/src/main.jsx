@@ -25,7 +25,7 @@ const cities = [
 ];
 
 const actionDefs = [
-  ["Dodaj",Plus], sad
+  ["Dodaj",Plus],
   ["Ukloni",Trash2],
   ["Izmijeni",Pencil],
   ["Pretraga",Search],
