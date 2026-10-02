@@ -1411,108 +1411,24 @@ function Measurements({db,commit,nav}){
   title="Mjerenje"
   subtitle="Mjerenje dolazi nakon narudžbe i prije računa."
 >
-
-<Toolbar
-  onAdd={()=>{
-  if(!db.orders.length){
-    alert("Prvo unesite narudžbu.");
-    return;
-  }
-
-  const q=prompt(
-    "Unesite broj narudžbe ili ime kupca:"
-  );
-
-  if(!q || !q.trim()) return;
-
-  const text=q.trim().toLowerCase();
-
-  const found=db.orders.find(o=>
-    String(o.no||"").toLowerCase()===text ||
-    String(o.customerName||"").toLowerCase().includes(text)
-  );
-
-  if(!found){
-    alert("Narudžba nije pronađena.");
-    return;
-  }
-
-  start(found);
-}}
-
-  onDelete={()=>{
-    if(!selected)return;
-
-    const exists=
-      db.measurements.some(
-        m=>m.orderId===selected.id
-      );
-
-    if(!exists){
-      alert("Za ovu narudžbu nema mjerenja.");
-      return;
-    }
-
-    if(!confirm("Obrisati mjerenje za ovu narudžbu?"))
-      return;
-
-    commit(
-      {
-        ...db,
-        measurements:
-          db.measurements.filter(
-            m=>m.orderId!==selected.id
-          )
-      },
-      "Mjerenje obrisano"
-    );
-
-    setSelected(null);
-    setEdit(null);
-  }}
-
-  onEdit={()=>{
-    if(selected){
-      start(selected);
-    }else{
-      alert("Prvo označite narudžbu.");
-    }
-  }}
-
-  onSearch={()=>{
-    const q=
-      prompt("Pretraga narudžbe ili kupca:")||
-      "";
-
-    if(!q.trim())return;
-
-    const found=
-      db.orders.find(o=>
-        String(o.no||"").toLowerCase().includes(q.toLowerCase()) ||
-        String(o.customerName||"").toLowerCase().includes(q.toLowerCase()) ||
-        String(o.phone||"").toLowerCase().includes(q.toLowerCase())
-      );
-<Toolbar
-  onAdd={()=>{
-    if(!db.orders.length){
+    <Toolbar
+  onAdd={() => {
+    if (!db.orders.length) {
       alert("Prvo unesite narudžbu.");
       return;
     }
 
-    const q=prompt(
-      "Unesite broj narudžbe ili ime kupca:"
+    const q = prompt("Unesite broj narudžbe ili ime kupca:");
+    if (!q || !q.trim()) return;
+
+    const text = q.trim().toLowerCase();
+
+    const found = db.orders.find(o =>
+      String(o.no || "").toLowerCase() === text ||
+      String(o.customerName || "").toLowerCase().includes(text)
     );
 
-    if(!q || !q.trim()) return;
-
-    const text=q.trim().toLowerCase();
-
-    const found=db.orders.find(o=>
-      String(o.no||"").toLowerCase()===text ||
-      String(o.customerName||"").toLowerCase().includes(text)
-    );
-
-    if(!found){
+    if (!found) {
       alert("Narudžba nije pronađena.");
       return;
     }
@@ -1520,24 +1436,24 @@ function Measurements({db,commit,nav}){
     start(found);
   }}
 
-  onDelete={()=>{
-    if(!selected){
+  onDelete={() => {
+    if (!selected) {
       alert("Prvo označite narudžbu.");
       return;
     }
 
-    if(!db.measurements.some(m=>m.orderId===selected.id)){
+    if (!db.measurements.some(m => m.orderId === selected.id)) {
       alert("Za ovu narudžbu nema mjerenja.");
       return;
     }
 
-    if(!confirm("Obrisati mjerenje za ovu narudžbu?")) return;
+    if (!confirm("Obrisati mjerenje za ovu narudžbu?")) return;
 
     commit(
       {
         ...db,
-        measurements:db.measurements.filter(
-          m=>m.orderId!==selected.id
+        measurements: db.measurements.filter(
+          m => m.orderId !== selected.id
         )
       },
       "Mjerenje obrisano"
@@ -1547,59 +1463,55 @@ function Measurements({db,commit,nav}){
     setEdit(null);
   }}
 
-  onEdit={()=>{
-    if(selected){
+  onEdit={() => {
+    if (selected) {
       start(selected);
-    }else{
+    } else {
       alert("Prvo označite narudžbu.");
     }
   }}
 
-  onSearch={()=>{
-    const q=prompt(
-      "Pretraga narudžbe ili kupca:"
-    )||"";
+  onSearch={() => {
+    const q = prompt("Pretraga narudžbe ili kupca:") || "";
+    if (!q.trim()) return;
 
-    if(!q.trim()) return;
-
-    const found=db.orders.find(o=>
-      String(o.no||"").toLowerCase().includes(q.toLowerCase()) ||
-      String(o.customerName||"").toLowerCase().includes(q.toLowerCase()) ||
-      String(o.phone||"").toLowerCase().includes(q.toLowerCase())
+    const found = db.orders.find(o =>
+      String(o.no || "").toLowerCase().includes(q.toLowerCase()) ||
+      String(o.customerName || "").toLowerCase().includes(q.toLowerCase()) ||
+      String(o.phone || "").toLowerCase().includes(q.toLowerCase())
     );
 
-    if(found){
+    if (found) {
       setSelected(found);
       start(found);
-    }else{
+    } else {
       alert("Narudžba nije pronađena.");
     }
   }}
 
-  onRefresh={()=>{
+  onRefresh={() => {
     setSelected(null);
     setEdit(null);
   }}
 
-  onPdf={()=>{
+  onPdf={() => {
     alert("PDF mjerenja će biti povezan sa štampom računa.");
   }}
 
-  onPrint={()=>{
+  onPrint={() => {
     window.print();
   }}
 
-  onExport={()=>{
+  onExport={() => {
     alert("Izvoz mjerenja biće dodat zajedno sa Excel izvozom.");
   }}
 
-  onImport={()=>{
+  onImport={() => {
     alert("Uvoz mjerenja biće dodat zajedno sa Excel uvozom.");
   }}
 />
-
-
-    <Table
+    
+<Table
       columns={[
         ["no","Narudžba"],
         ["customerName","Kupac"],
